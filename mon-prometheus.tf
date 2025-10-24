@@ -6,11 +6,6 @@
 # Variables
 #########################
 
-variable "grafana_admin_password" {
-  default = "prom-operator"
-  type    = string
-}
-
 #########################
 # Namespaces
 #########################
