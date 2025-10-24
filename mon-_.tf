@@ -17,6 +17,6 @@ resource "kubernetes_namespace" "monitoring" {
   metadata { name = "monitoring" }
 }
 
-resource "kubernetes_namespace" "logging" {
-  metadata { name = "logging" }
-}
+# resource "kubernetes_namespace" "logging" {
+#   metadata { name = "logging" }
+# }
