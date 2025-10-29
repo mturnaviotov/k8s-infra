@@ -48,37 +48,6 @@ resource "helm_release" "kubernetes_dashboard" {
 # kubectl delete serviceaccount admin-user -n kubernetes-dashboard
 ##########################################################################
 
-# terraform import -!- ns=`kubectl get ingressroute kubernetes-dashboard-route -n kubernetes-dashboard -o jsonpath='{.apiVersion}'`
-# terraform import kubernetes_manifest.kubernetes_dashboard_ingressroute 'apiVersion=traefik.io/v1alpha1,kind=IngressRoute,namespace=kubernetes-dashboard,name=kubernetes-dashboard-route'
-resource "kubernetes_manifest" "kubernetes_dashboard_ingressroute" {
-  manifest = {
-    apiVersion = "traefik.io/v1alpha1"
-    kind       = "IngressRoute"
-    metadata = {
-      name      = "kubernetes-dashboard-route"
-      namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
-    }
-
-    spec = {
-      entryPoints = ["websecure"]
-      routes = [
-        {
-          match = "Host(`board.${var.dns_private_zone_name}`)"
-          kind  = "Rule"
-          services = [
-            {
-              name = "kubernetes-dashboard-kong-proxy"
-              port = 443
-            }
-          ]
-        }
-      ]
-    }
-  }
-
-  depends_on = [helm_release.kubernetes_dashboard, helm_release.traefik]
-}
-
 # terraform import kubernetes_manifest.dashboard_admin_user 'apiVersion=v1,kind=ServiceAccount,namespace=kubernetes-dashboard,name=admin-user'
 resource "kubernetes_manifest" "dashboard_admin_user" {
   manifest = {
@@ -129,3 +98,57 @@ output "k8s-dashboard_admin_user_bearer_token" {
   value      = "run kubectl -n kubernetes-dashboard create token admin-user\n, and paste the token to login to the dashboard"
   depends_on = [kubernetes_manifest.dashboard_admin_rolebinding]
 }
+
+# terraform import -!- ns=`kubectl get ingressroute kubernetes-dashboard-route -n kubernetes-dashboard -o jsonpath='{.apiVersion}'`
+# terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
+resource "kubernetes_manifest" "k8s_dashboard_ingress" {
+  manifest = {
+    apiVersion = "networking.k8s.io/v1"
+    kind       = "Ingress"
+    metadata = {
+      name      = "dashboard-dns"
+      namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
+      annotations = {
+        "kubernetes.io/ingress.class"                      = "traefik"
+        "cert-manager.io/cluster-issuer"                   = "local-ca"
+        "external-dns.alpha.kubernetes.io/hostname"        = "board.${var.dns_private_zone_name}"
+        "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      }
+    }
+
+    spec = {
+      ingressClassName = "traefik"
+      rules = [
+        {
+          host = "board.${var.dns_private_zone_name}"
+          http = {
+            paths = [
+              {
+                path     = "/"
+                pathType = "Prefix"
+                backend = {
+                  service = {
+                    name = "kubernetes-dashboard-web"
+                    port = {
+                      number = 8000
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+
+      tls = [
+        {
+          hosts      = ["board.${var.dns_private_zone_name}"]
+          secretName = "dashboard-tls"
+        }
+      ]
+    }
+  }
+
+  depends_on = [helm_release.kubernetes_dashboard]
+}
+
