@@ -5,7 +5,7 @@
 variable "dns_private_zone_name" {
   description = "DNS zone name for CoreDNS and ExternalDNS integration"
   type        = string
-  default     = "test.tld" ### for OrbStack and auto discovery we can use k8s.orb.local
+  default     = "zone.internal" ### for OrbStack and auto discovery we can use k8s.orb.local
 }
 
 variable "dns_server_name" {
@@ -28,6 +28,12 @@ variable "dns_cluster_zone" {
   default = "svc.cluster.local"
   type    = string
 }
+
+variable "dns_orb_zone" {
+  default = "k8s.orb.local"
+  type    = string
+}
+
 #########################
 # Namespaces
 #########################

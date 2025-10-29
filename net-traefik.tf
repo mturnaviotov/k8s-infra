@@ -27,6 +27,11 @@ resource "helm_release" "traefik" {
   create_namespace = false
 
   values = [yamlencode({
+    metadata = {
+      annotations = {
+        "cert-manager.io/cluster-issuer" : "local-ca"
+        "external-dns.alpha.kubernetes.io/hostname" : "traefik.${var.dns_orb_zone}" #${var.dns_private_zone_name}"
+    } }
     global = {
       checkNewVersion    = true
       sendAnonymousUsage = true
@@ -67,12 +72,13 @@ resource "kubernetes_manifest" "traefik_ingressroute" {
       entryPoints = ["web"]
       routes = [
         {
-          match = "Host(`traefik.k8s.orb.local`)"
+          match = "Host(`traefik.${var.dns_orb_zone}`)"
           kind  = "Rule"
           services = [
             {
               name = "api@internal"
-              #port = 80
+              port = 80
+              kind = "TraefikService"
             }
           ]
         }
