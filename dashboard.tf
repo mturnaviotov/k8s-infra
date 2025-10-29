@@ -94,11 +94,6 @@ resource "kubernetes_manifest" "dashboard_admin_rolebinding" {
   #depends_on = [kubernetes_manifest.dashboard_admin_user]
 }
 
-output "k8s-dashboard_admin_user_bearer_token" {
-  value      = "run kubectl -n kubernetes-dashboard create token admin-user\n, and paste the token to login to the dashboard"
-  depends_on = [kubernetes_manifest.dashboard_admin_rolebinding]
-}
-
 # terraform import -!- ns=`kubectl get ingressroute kubernetes-dashboard-route -n kubernetes-dashboard -o jsonpath='{.apiVersion}'`
 # terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
 resource "kubernetes_manifest" "k8s_dashboard_ingress" {
@@ -152,3 +147,8 @@ resource "kubernetes_manifest" "k8s_dashboard_ingress" {
   depends_on = [helm_release.kubernetes_dashboard]
 }
 
+
+output "k8s-dashboard_admin_user_bearer_token" {
+  value      = "kubectl -n kubernetes-dashboard create token admin-user\n, and paste the token to login to the dashboard"
+  depends_on = [kubernetes_manifest.dashboard_admin_rolebinding]
+}
