@@ -4,11 +4,21 @@ kind: IngressRoute
 metadata:
   name: traefik
   namespace: ingress
+  annotations:
+    kubernetes.io/ingress.className: traefik
+    cert-manager.io/cluster-issuer: local-ca
+    external-dns.alpha.kubernetes.io/hostname: traefik.k8s.orb.local.
+    traefik.ingress.kubernetes.io/router.entrypoints: "web"
+    #traefik.ingress.kubernetes.io/router.middlewares: "default-https-redirect@kubernetescrd"
+    #traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.priority: "10"
+
 spec:
   entryPoints:
   - web
+  #- websecure
   routes:
-  - match: Host(`traefik.k8s.orb.local`)
+  - match: Host(`traefik.k8s.orb.local.`)
     kind: Rule
     services:
     - name: api@internal
