@@ -3,7 +3,7 @@
 #########################
 # Variables
 #########################
-variable "app_name" {
+variable "name_keycloak" {
   default = "keycloak"
   type    = string
 }
@@ -22,17 +22,17 @@ resource "kubernetes_namespace" "auth" {
 #########################
 
 # terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
-resource "kubernetes_manifest" "keycloak_ingress" {
+resource "kubernetes_manifest" "ingress_keycloak" {
   manifest = {
     apiVersion = "networking.k8s.io/v1"
     kind       = "Ingress"
     metadata = {
-      name      = "ingress-${var.app_name}"
+      name      = "ingress-${var.name_keycloak}"
       namespace = kubernetes_namespace.auth.metadata[0].name
       annotations = {
         "kubernetes.io/ingress.class"                      = "traefik"
         "cert-manager.io/cluster-issuer"                   = "local-ca"
-        "external-dns.alpha.kubernetes.io/hostname"        = "${var.app_name}.${var.dns_private_zone_name}"
+        "external-dns.alpha.kubernetes.io/hostname"        = "${var.name_keycloak}.${var.dns_private_zone_name}"
         "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
       }
     }
@@ -41,7 +41,7 @@ resource "kubernetes_manifest" "keycloak_ingress" {
       ingressClassName = "traefik"
       rules = [
         {
-          host = "${var.app_name}.${var.dns_private_zone_name}"
+          host = "${var.name_keycloak}.${var.dns_private_zone_name}"
           http = {
             paths = [
               {
@@ -49,7 +49,7 @@ resource "kubernetes_manifest" "keycloak_ingress" {
                 pathType = "Prefix"
                 backend = {
                   service = {
-                    name = var.app_name
+                    name = var.name_keycloak
                     port = {
                       number = 8080
                     }
@@ -63,8 +63,8 @@ resource "kubernetes_manifest" "keycloak_ingress" {
 
       tls = [
         {
-          hosts      = ["${var.app_name}.${var.dns_private_zone_name}"]
-          secretName = "${var.app_name}-tls"
+          hosts      = ["${var.name_keycloak}.${var.dns_private_zone_name}"]
+          secretName = "${var.name_keycloak}-tls"
         }
       ]
     }
