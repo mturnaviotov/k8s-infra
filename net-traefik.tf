@@ -1,3 +1,5 @@
+# Terraform manifest: net-traefik.tf
+
 #########################
 # Variables
 #########################
@@ -69,7 +71,7 @@ resource "kubernetes_manifest" "traefik_ingressroute" {
       namespace = kubernetes_namespace.ingress.metadata[0].name
     }
     spec = {
-      entryPoints = ["web"]
+      entryPoints = ["web", "websecure"]
       routes = [
         {
           match = "Host(`traefik.${var.dns_orb_zone}`)"

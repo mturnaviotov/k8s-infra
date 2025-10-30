@@ -1,4 +1,4 @@
-# Terraform manifest: keycloak.tf
+# Terraform manifest: dashboard.tf
 
 #########################
 # Variables
@@ -10,7 +10,7 @@
 
 # terraform import kubernetes_namespace.k8s-dashboard kubernetes-dashboard
 resource "kubernetes_namespace" "k8s-dashboard" {
-  metadata { name = "kubernetes-dashboard" }
+  metadata { name = "k8s-dashboard" }
 }
 
 #########################
@@ -147,8 +147,7 @@ resource "kubernetes_manifest" "k8s_dashboard_ingress" {
   depends_on = [helm_release.kubernetes_dashboard]
 }
 
-
 output "k8s-dashboard_admin_user_bearer_token" {
-  value      = "kubectl -n kubernetes-dashboard create token admin-user\n, and paste the token to login to the dashboard"
+  value      = "kubectl -n ${kubernetes_namespace.k8s-dashboard.metadata[0].name} create token admin-user --duration=1999h\n, and paste the token to login to the dashboard UI"
   depends_on = [kubernetes_manifest.dashboard_admin_rolebinding]
 }

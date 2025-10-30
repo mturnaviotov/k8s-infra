@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "keycloak_ingress" {
     apiVersion = "networking.k8s.io/v1"
     kind       = "Ingress"
     metadata = {
-      name      = "${var.app_name}-ingress"
+      name      = "ingress-${var.app_name}"
       namespace = kubernetes_namespace.auth.metadata[0].name
       annotations = {
         "kubernetes.io/ingress.class"                      = "traefik"
