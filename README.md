@@ -5,10 +5,10 @@ Networks, DNS, monitoring, CI/CD
 
 # Components
 
-[v] - Traefik       (Ingress)
-[v] - ExternalDNS   (DNS)
-[v] - PowerDNS      (DNS)
-[v] - Cert Manager  (SSL)
-[v] - K8S Dashboard (UI)
-[v] - KeyCloak      (AAA)
-[v] - Jenkins       (CI/CD)
+- [x] Traefik       (Ingress)
+- [x] ExternalDNS   (DNS)
+- [x] PowerDNS      (DNS)
+- [x] Cert Manager  (SSL)
+- [x] K8S Dashboard (UI)
+- [x] KeyCloak      (AAA)
+- [x] Jenkins       (CI/CD)
