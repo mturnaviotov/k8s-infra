@@ -18,10 +18,12 @@ resource "kubernetes_namespace" "auth" {
 }
 
 #########################
-# Dashboard
+# Keycloak Ingress
+# Keycloak should be installed separately, e.g., via Official or custom Helm chart
+# kubectl apply -n auth -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/refs/heads/main/kubernetes/keycloak.yaml
 #########################
 
-# terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
+# terraform import kubernetes_manifest.ingress_keycloak 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=auth,name=ingress-keycloak'
 resource "kubernetes_manifest" "ingress_keycloak" {
   manifest = {
     apiVersion = "networking.k8s.io/v1"
@@ -72,4 +74,3 @@ resource "kubernetes_manifest" "ingress_keycloak" {
 
   depends_on = [kubernetes_namespace.auth]
 }
-

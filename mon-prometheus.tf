@@ -1,4 +1,4 @@
-# Terraform manifest: monitoring-prometheus.tf
+# Terraform manifest: mon-prometheus.tf
 
 #########################
 # Variables
@@ -7,18 +7,19 @@
 #########################
 # Namespaces
 #########################
-# terraform import kubernetes_namespace.monitoring monitoring
 
+# terraform import kubernetes_namespace.monitoring monitoring
 # resource "kubernetes_namespace" "monitoring" {
 #   metadata {
 #     name = "monitoring"
 #   }
 # }
 
-# terraform import helm_release.prometheus monitoring/prometheus
 ###########################
 # Complete kube-prometheus-stack
 ###########################
+
+# terraform import helm_release.prometheus monitoring/prometheus
 resource "helm_release" "prometheus" {
   name       = "prometheus"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
@@ -35,7 +36,7 @@ resource "helm_release" "prometheus" {
               job_name = "macos-host"
               static_configs = [
                 {
-                  targets = ["host.docker.internal:9100"]
+                  targets = ["prometheus-prometheus-node-exporter.monitoring.svc.cluster.local:9100"]
                 }
               ]
             }
@@ -44,8 +45,6 @@ resource "helm_release" "prometheus" {
       }
     })
   ]
-
-  #depends_on = [helm_release.node_exporter]
 }
 
 #########################
@@ -53,5 +52,5 @@ resource "helm_release" "prometheus" {
 #########################
 
 output "grafana_admin_password" {
-  value = "grafana password:\nkubectl -n monitoring get secrets prometheus-grafana -o json | jq '.data | map_values(@base64d)'"
+  value = "\n=====\nGrafana password:\nkubectl -n monitoring get secrets prometheus-grafana -o json | jq '.data | map_values(@base64d)'\n"
 }

@@ -1,5 +1,18 @@
-# # ExternalDNS Helm release
-# # terraform import helm_release.external_dns dns/external-dns
+# Terraform manifest: net-dns-external.tf
+
+#########################
+# Variables
+#########################
+
+#########################
+# Namespaces
+#########################
+
+#########################
+# External DNS for PowerDNS
+#########################
+
+# terraform import helm_release.external_dns dns/external-dns
 resource "helm_release" "external_dns" {
   name             = "external-dns"
   namespace        = kubernetes_namespace.dns.metadata[0].name

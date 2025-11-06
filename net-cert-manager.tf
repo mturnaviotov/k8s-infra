@@ -8,15 +8,18 @@
 # Namespaces
 #########################
 
+# terraform import kubernetes_namespace.cert_manager cert-manager
 resource "kubernetes_namespace" "cert_manager" {
   metadata {
     name = "cert-manager"
   }
 }
+
 #########################
 # Cert Manager Helm Release
 #########################
 
+# terraform import helm_release.cert_manager cert-manager/cert-manager
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
   chart            = "oci://quay.io/jetstack/charts/cert-manager"

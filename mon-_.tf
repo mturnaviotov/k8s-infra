@@ -1,22 +1,19 @@
-# Terraform manifest: monitoring-loki.tf
+# Terraform manifest: mon-_.tf
 
 #########################
-# Variables
+# Variables and common settings for monitoring and logging
 #########################
-
-variable "grafana_admin_password" {
-  default = "prom-operator" # just default for our needs, net to be replaced in tuning
-  type    = string
-}
 
 #########################
 # Namespaces
 #########################
 
+# terraform import kubernetes_namespace.monitoring monitoring
 resource "kubernetes_namespace" "monitoring" {
   metadata { name = "monitoring" }
 }
 
+# terraform import kubernetes_namespace.logging logging
 # resource "kubernetes_namespace" "logging" {
 #   metadata { name = "logging" }
 # }

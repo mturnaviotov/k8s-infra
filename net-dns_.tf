@@ -1,7 +1,7 @@
 # Terraform manifest: net-dns_.tf
 
 #########################
-# Variables
+# Variables and common settings for DNS and networking
 #########################
 
 variable "dns_private_zone_name" {

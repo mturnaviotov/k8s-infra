@@ -95,11 +95,8 @@ resource "kubernetes_manifest" "jenkins_ingress" {
       ]
     }
   }
-
-  depends_on = [kubernetes_namespace.jenkins]
 }
 
 output "jenkins_admin_password" {
-  value = "password is:\nkubectl -n ${kubernetes_namespace.jenkins.metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'"
+  value = "\n=====\nJenkins password is:\nkubectl -n ${kubernetes_namespace.jenkins.metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'\n"
 }
-
