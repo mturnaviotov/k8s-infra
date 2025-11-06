@@ -12,6 +12,7 @@
 # PowerDNS from my custom chart
 #########################
 
+# terraform import helm_release.pdns dns/pdns
 resource "helm_release" "pdns" {
   name             = "pdns"
   chart            = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.1/pdns-0.0.1.tgz"
@@ -42,11 +43,11 @@ pdns:
     value: *pdns_pass
   resources:
     requests:
-      cpu: "500m"
-      memory: "2Gi"
+      cpu: "250m"
+      memory: "0.5Gi"
     limits:
-      cpu: "2000m"
-      memory: "4Gi"
+      cpu: "500m"
+      memory: "1Gi"
   EOF
   ]
 }
