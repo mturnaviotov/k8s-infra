@@ -10,7 +10,7 @@
 
 # terraform import kubernetes_namespace.k8s-dashboard kubernetes-dashboard
 resource "kubernetes_namespace" "k8s-dashboard" {
-  metadata { name = "k8s-dashboard" }
+  metadata { name = "kubernetes-dashboard" }
 }
 
 #########################
@@ -96,12 +96,12 @@ resource "kubernetes_manifest" "dashboard_admin_rolebinding" {
 
 # terraform import -!- ns=`kubectl get ingressroute kubernetes-dashboard-route -n kubernetes-dashboard -o jsonpath='{.apiVersion}'`
 # terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
-resource "kubernetes_manifest" "k8s_dashboard_ingress" {
+resource "kubernetes_manifest" "kubernetes_dashboard_ingress" {
   manifest = {
     apiVersion = "networking.k8s.io/v1"
     kind       = "Ingress"
     metadata = {
-      name      = "dashboard-dns"
+      name      = "kubernetes-dashboard-dns"
       namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
       annotations = {
         "kubernetes.io/ingress.class"                      = "traefik"
@@ -113,6 +113,12 @@ resource "kubernetes_manifest" "k8s_dashboard_ingress" {
 
     spec = {
       ingressClassName = "traefik"
+      tls : [
+        {
+          hosts      = ["board.${var.dns_private_zone_name}"]
+          secretName = "kubernetes-dashboard-tls"
+        }
+      ]
       rules = [
         {
           host = "board.${var.dns_private_zone_name}"
