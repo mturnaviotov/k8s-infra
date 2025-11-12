@@ -1,5 +1,9 @@
+## manual Keycloak deployment on Kubernetes
 ## kubectl create ns auth ; kubectl apply -n auth -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/refs/heads/main/kubernetes/keycloak.yaml
-###
+
+### deploy Keycloak with embedded Infinispan cache and PostgreSQL database
+### this content can be updated on http, so his is example only for learning and testing purposes
+
 apiVersion: v1
 kind: Service
 metadata:
