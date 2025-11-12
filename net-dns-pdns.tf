@@ -19,9 +19,41 @@ resource "helm_release" "pdns" {
   namespace        = kubernetes_namespace.dns.metadata[0].name
   create_namespace = false
   values = [<<EOF
+ingress:
+  enabled: true
+  host: pdns.${var.dns_private_zone_name}
+  ClusterIP: "192.168.194.130"
+  port: 8081
+  annotations:
+    kubernetes.io/ingress.className: traefik
+    cert-manager.io/cluster-issuer: local-ca
+    external-dns.alpha.kubernetes.io/hostname: pdns.${var.dns_private_zone_name}
+    traefik.ingress.kubernetes.io/router.entrypoints: "web"
+    traefik.ingress.kubernetes.io/router.priority: "10"
+
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - "pdns.${var.dns_private_zone_name}"
+    secretName: "pdns-tls.${var.dns_private_zone_name}"
+  rules:
+  - host: "pdns.${var.dns_private_zone_name}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "pdns.${var.dns_private_zone_name}"
+            port:
+              number: 8081
+
 apiPassword: &pdns_pass "${var.dns_server_password}"
 pdns:
   apiPassword: *pdns_pass # Replace with your admin password from env vars or secret manager
+  zones:
+  - ${var.dns_private_zone_name}}
   env:
   - name: api_pdns
     value: "yes"
@@ -43,10 +75,10 @@ pdns:
     value: *pdns_pass
   resources:
     requests:
-      cpu: "250m"
-      memory: "0.5Gi"
+      cpu: "150m"
+      memory: "512M"
     limits:
-      cpu: "500m"
+      cpu: "200m"
       memory: "1Gi"
   EOF
   ]
