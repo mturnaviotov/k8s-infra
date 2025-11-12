@@ -38,7 +38,9 @@ resource "helm_release" "cert_manager" {
 #########################
 
 # You need to create the CA cert and key files before applying this terraform:
-# openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes #-subj "/CN=local-ca"
+# openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=local-ca"
+# Then install the CA cert into your system trust store, e.g. on macOS:
+# sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ca.crt
 resource "kubernetes_secret" "local_ca_key_pair" {
   type = "kubernetes.io/tls"
 
@@ -57,6 +59,7 @@ resource "kubernetes_secret" "local_ca_key_pair" {
   ]
 }
 
+## kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.1/cert-manager.crds.yaml
 resource "kubernetes_manifest" "cluster_issuer_local_ca" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
