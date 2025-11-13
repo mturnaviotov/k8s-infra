@@ -288,56 +288,6 @@ EOF
   ]
 }
 
-# terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
-resource "kubernetes_manifest" "jenkins_ingress" {
-  manifest = {
-    apiVersion = "networking.k8s.io/v1"
-    kind       = "Ingress"
-    metadata = {
-      name      = "ingress-${var.name_jenkins}"
-      namespace = kubernetes_namespace.jenkins.metadata[0].name
-      annotations = {
-        "kubernetes.io/ingress.class"                      = "traefik"
-        "cert-manager.io/cluster-issuer"                   = "local-ca"
-        "external-dns.alpha.kubernetes.io/hostname"        = "${var.name_jenkins}.${var.dns_private_zone_name}"
-        "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
-      }
-    }
-
-    spec = {
-      ingressClassName = "traefik"
-      rules = [
-        {
-          host = "${var.name_jenkins}.${var.dns_private_zone_name}"
-          http = {
-            paths = [
-              {
-                path     = "/"
-                pathType = "Prefix"
-                backend = {
-                  service = {
-                    name = var.name_jenkins
-                    port = {
-                      number = 8080
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-
-      tls = [
-        {
-          hosts      = ["${var.name_jenkins}.${var.dns_private_zone_name}"]
-          secretName = "${var.name_jenkins}-tls"
-        }
-      ]
-    }
-  }
-}
-
 output "jenkins_admin_password" {
   value = "\n=====\nJenkins password is:\nkubectl -n ${kubernetes_namespace.jenkins.metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'\n"
 }

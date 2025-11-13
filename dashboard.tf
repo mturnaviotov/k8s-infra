@@ -94,65 +94,6 @@ resource "kubernetes_manifest" "dashboard_admin_rolebinding" {
   #depends_on = [kubernetes_manifest.dashboard_admin_user]
 }
 
-# terraform import -!- ns=`kubectl get ingressroute kubernetes-dashboard-route -n kubernetes-dashboard -o jsonpath='{.apiVersion}'`
-# terraform import kubernetes_manifest.k8s_dashboard_ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=dashboard-dns'
-resource "kubernetes_manifest" "kubernetes_dashboard_ingress" {
-  manifest = {
-    apiVersion = "networking.k8s.io/v1"
-    kind       = "Ingress"
-    metadata = {
-      name      = "kubernetes-dashboard-dns"
-      namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
-      annotations = {
-        "kubernetes.io/ingress.class"                      = "traefik"
-        "cert-manager.io/cluster-issuer"                   = "local-ca"
-        "external-dns.alpha.kubernetes.io/hostname"        = "board.${var.dns_private_zone_name}"
-        "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
-      }
-    }
-
-    spec = {
-      ingressClassName = "traefik"
-      tls : [
-        {
-          hosts      = ["board.${var.dns_private_zone_name}"]
-          secretName = "kubernetes-dashboard-tls"
-        }
-      ]
-      rules = [
-        {
-          host = "board.${var.dns_private_zone_name}"
-          http = {
-            paths = [
-              {
-                path     = "/"
-                pathType = "Prefix"
-                backend = {
-                  service = {
-                    name = "kubernetes-dashboard-web"
-                    port = {
-                      number = 8000
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-
-      tls = [
-        {
-          hosts      = ["board.${var.dns_private_zone_name}"]
-          secretName = "dashboard-tls"
-        }
-      ]
-    }
-  }
-
-  depends_on = [helm_release.kubernetes_dashboard]
-}
-
 output "k8s-dashboard_bearer" {
   value = "\n=====\nJWT for Dashboard:\nkubectl -n ${kubernetes_namespace.k8s-dashboard.metadata[0].name} create token admin-user --duration=1999h\n, and paste the token to login to the dashboard UI\n"
 }
