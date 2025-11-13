@@ -1,0 +1,46 @@
+global:
+  domain: argocd.zone.internal
+
+server:
+  ingress:
+    enabled: false
+
+configs:
+  cm:
+    create: true
+    admin.enabled: true
+    server.insecure: true
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    oidc.tls.insecure.skip.verify: "true"
+    oidc.config: |
+      name: Keycloak
+      issuer: "${issuer}"
+      clientID: "${clientID}"
+      clientSecret: $oidc.keycloak.clientSecret
+      requestedScopes: ["openid", "profile", "email", "groups"]
+    url: https://argocd.zone.internal
+
+  rbac:
+    policy.csv: |
+%{ for group in admin_groups ~}
+      g, ${group}, role:admin
+%{ endfor ~}
+    policy.default: ''
+    policy.matchMode: glob
+    scopes: '[groups]'
+
+  secret:
+    create: true
+    extra:
+      oidc.keycloak.clientSecret: "${oidc_client_secret}"
+
+  cmd-params-cm:
+    create: true
+    extra:
+      server.insecure: "true"
+
+controller:
+  replicaCount: 1
+
+dex:
+  enabled: false

@@ -28,52 +28,12 @@ resource "helm_release" "argocd" {
   namespace        = kubernetes_namespace.argocd.metadata[0].name
   create_namespace = false
 
-  values = [<<EOF
-    global:
-      domain: argocd.zone.internal
-
-    server:
-      ingress:
-        enabled: false
-
-    configs:
-      cm:
-        create: true
-        admin.enabled: true
-        server.insecure: true
-        application.instanceLabelKey: argocd.argoproj.io/instance
-        oidc.tls.insecure.skip.verify: "true"
-        oidc.config: |
-          name: Keycloak
-          issuer: https://keycloak.zone.internal/realms/cluster
-          clientID: argocd
-          clientSecret: $oidc.keycloak.clientSecret
-          requestedScopes: ["openid", "profile", "email", "groups"]
-        url: https://argocd.zone.internal
-
-      rbac:
-        policy.csv: |
-          g, argocd-admin, role:admin
-        policy.default: ''
-        policy.matchMode: glob
-        scopes: '[groups]'
-
-      secret:
-        create: true
-        extra:
-          oidc.keycloak.clientSecret: "${keycloak_openid_client.argocd.client_secret}"
-
-      cmd-params-cm:
-        create: true
-        extra:
-          server.insecure: "true"
-
-    controller:
-      replicaCount: 1
-
-    dex:
-      enabled: false
-  EOF
+  values = [templatefile("${path.module}/yaml/argocd.yaml", {
+    clientID           = "argocd"
+    oidc_client_secret = keycloak_openid_client.argocd.client_secret,
+    issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}",
+    admin_groups       = ["argocd-admin"],
+    })
   ]
 }
 
