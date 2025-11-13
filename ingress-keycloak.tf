@@ -4,8 +4,15 @@
 # Variables
 #########################
 variable "name_keycloak" {
-  default = "keycloak"
-  type    = string
+  description = "Name for referencing service"
+  default     = "keycloak"
+  type        = string
+}
+
+variable "keycloak_realm" {
+  description = "Keycloak realm name"
+  default     = "master"
+  type        = string
 }
 
 #########################
