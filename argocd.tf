@@ -1,4 +1,9 @@
-######################### # Variables #########################
+# Terraform manifest: argocd.tf
+
+#########################
+# Variables
+#########################
+
 variable "argocd_cluster_url" {
   description = "ArgoCD cluster URL"
   type        = string
@@ -8,6 +13,7 @@ variable "argocd_cluster_url" {
 #########################
 # Namespace
 #########################
+
 resource "kubernetes_namespace" "argocd" {
   metadata { name = "argocd" }
 }
@@ -23,18 +29,52 @@ resource "helm_release" "argocd" {
   create_namespace = false
 
   values = [<<EOF
-global:
-  domain: argocd.zone.internal
-server:
-  ingress:
-    enabled: true
-controller:
-  replicaCount: 1
-redis:
-  enabled: true
-EOF
-  ]
+    global:
+      domain: argocd.zone.internal
 
+    server:
+      ingress:
+        enabled: false
+
+    configs:
+      cm:
+        create: true
+        admin.enabled: true
+        server.insecure: true
+        application.instanceLabelKey: argocd.argoproj.io/instance
+        oidc.tls.insecure.skip.verify: "true"
+        oidc.config: |
+          name: Keycloak
+          issuer: https://keycloak.zone.internal/realms/cluster
+          clientID: argocd
+          clientSecret: $oidc.keycloak.clientSecret
+          requestedScopes: ["openid", "profile", "email", "groups"]
+        url: https://argocd.zone.internal
+
+      rbac:
+        policy.csv: |
+          g, argocd-admin, role:admin
+        policy.default: ''
+        policy.matchMode: glob
+        scopes: '[groups]'
+
+      secret:
+        create: true
+        extra:
+          oidc.keycloak.clientSecret: "${keycloak_openid_client.argocd.client_secret}"
+
+      cmd-params-cm:
+        create: true
+        extra:
+          server.insecure: "true"
+
+    controller:
+      replicaCount: 1
+
+    dex:
+      enabled: false
+  EOF
+  ]
 }
 
 # add to config map argocd-cm for custom accounts and add admin user token login

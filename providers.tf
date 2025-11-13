@@ -30,6 +30,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.38.0"
     }
+    keycloak = {
+      source  = "keycloak/keycloak"
+      version = "5.5.0"
+    }
   }
 }
 
@@ -42,4 +46,13 @@ provider "helm" {
   kubernetes = {
     config_path = "~/.kube/config"
   }
+}
+
+provider "keycloak" {
+  client_id     = var.keycloak_admin_client_id
+  client_secret = var.keycloak_admin_client_secret
+  url           = var.keycloak_admin_url
+  realm         = var.keycloak_admin_realm
+  username      = var.keycloak_admin_username
+  password      = var.keycloak_admin_password
 }
