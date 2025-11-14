@@ -1,0 +1,18 @@
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: local-ca
+    external-dns.alpha.kubernetes.io/hostname: traefik.${dns_zone}
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+api:
+  dashboard: true
+  insecure: true
+log:
+  level: DEBUG
+accessLog: {}
