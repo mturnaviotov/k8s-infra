@@ -6,7 +6,7 @@ variable "keycloak_admin_client_id" {
 variable "keycloak_admin_client_secret" {
   description = "Keycloak admin client secret"
   type        = string
-  default     = "mnPLAPvw3SYxduzsg1kRNZPyYLfI5Nru"
+  default     = "secret-key" # secret from UI/master realm for admin-cli user
 }
 variable "keycloak_admin_url" {
   description = "Keycloak admin URL"
