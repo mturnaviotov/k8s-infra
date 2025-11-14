@@ -1,8 +1,15 @@
 # Terraform manifest: keycloak.tf
 
+###
+### There no KeyCloak installation helm because it installed via bootstrapper
+### yaml/keycloak.yaml
+###
+### kubectl apply -n auth -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/refs/heads/main/kubernetes/keycloak.yaml
+
 #########################
 # Variables
 #########################
+
 variable "name_keycloak" {
   description = "Name for referencing service"
   default     = "keycloak"
@@ -23,10 +30,3 @@ variable "keycloak_realm" {
 resource "kubernetes_namespace" "auth" {
   metadata { name = "auth" }
 }
-
-#########################
-# Keycloak Ingress
-# Keycloak should be installed separately, e.g., via Official or custom Helm chart
-# kubectl apply -n auth -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/refs/heads/main/kubernetes/keycloak.yaml
-#########################
-

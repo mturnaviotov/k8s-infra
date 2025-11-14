@@ -76,6 +76,7 @@ resource "keycloak_user_groups" "user_groups" {
   group_ids = [for g in each.value : keycloak_group.argocd_groups[g].id]
 } # output argocd openid client secret
 
+# We will use it in Argo values for OIDC intergation
 output "argocd_client-secret" {
   value     = keycloak_openid_client.argocd.client_secret
   sensitive = true

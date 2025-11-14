@@ -10,17 +10,29 @@ Networks, DNS, monitoring, CI/CD for providing whole Infrastructure as a code
 - [x] PowerDNS      (DNS)
 - [x] Cert Manager  (SSL)
 - [x] K8S Dashboard (UI)
-- [x] KeyCloak      (AAA)
-- [x] Jenkins       (CI/CD)
-- [x] ArgoCD        (CD)
+- [x] KeyCloak      (AAA)   - installation via quick start script (kubectl apply -f...)
+- [x] Jenkins       (CI/CD) 
+- [x] ArgoCD        (CD)    - OIDC with KeyCloak
 - [x] Test ToDo Application deployed via ArgoCD (CD)
+
+# Installation
+
+Due to external CRD absense you can't install Helm chart and dependent resources at the same time, 
+You need to firstly install by renaming all non used in this terraform apply cycle TF files to avoid fail, and add it later in next 'terraform apply' cycle
+
+Please carefully read TF files, they contains pre installation steps, like certificates generation for cert-manager
+
+0. Traefik, Dashboard, cert-manager, dns-external and PowerDNS
+1. KeyCloak
+2. Jenkins, ArgoCD
+3. ArgoCD Application
+4. Ingresses
+5. Monitoring
 
 # TODO:
 
-1. Link all services to KeyCloak as main user database
-2. Add Nexus as Docker image and helm registry
+1. Add Nexus as Docker image and helm registry (Now used DockerHub and GitHub artifacts for Helm charts)
 
 ## Notices
 
-1. You should build all images locally for you before use - PowerDNS, ToDo, etc.
-2. ArgoCD Cluster will be in UNKNOWN state until first deploy
+1. ArgoCD Cluster will be in UNKNOWN state until first deploy
