@@ -51,7 +51,7 @@ provider "helm" {
 provider "keycloak" {
   client_id     = var.keycloak_admin_client_id
   client_secret = var.keycloak_admin_client_secret
-  url           = var.keycloak_admin_url
+  url           = var.keycloak_admin_url # "http://keycloak.(namespace).svc.cluster.local:8080"
   realm         = var.keycloak_admin_realm
   username      = var.keycloak_admin_username
   password      = var.keycloak_admin_password
