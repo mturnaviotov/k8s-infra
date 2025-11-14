@@ -30,9 +30,9 @@ resource "helm_release" "argocd" {
 
   values = [templatefile("${path.module}/yaml/argocd.yaml", {
     clientID           = "argocd"
-    oidc_client_secret = keycloak_openid_client.argocd.client_secret,
-    issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}",
-    admin_groups       = ["argocd-admin"],
+    oidc_client_secret = keycloak_openid_client.argocd.client_secret
+    issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
+    admin_groups       = ["argocd-admin"]
     })
   ]
 }
