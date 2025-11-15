@@ -80,10 +80,12 @@ resource "helm_release" "jenkins" {
     jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace.jenkins.metadata[0].name}.${var.dns_cluster_zone}"
     jenkins_url          = "${var.name_jenkins}.${var.dns_private_zone_name}"
     kubernetes_namespace = kubernetes_namespace.jenkins.metadata[0].name
-    oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}",
+    oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
     oidc_clientid        = var.jenkins_keycloak_clientid
     oidc_secret          = var.jenkins_keycloak_secret
     dns_zone             = var.dns_cluster_zone
+    github_account       = var.github_account
+    github_pat           = var.github_pat
     })
   ]
 

@@ -18,25 +18,6 @@ resource "kubernetes_namespace" "argocd" {
   metadata { name = "argocd" }
 }
 
-#########################
-# ArgoCD (Helm)
-#########################
-resource "helm_release" "argocd" {
-  name             = "argocd"
-  repository       = "https://argoproj.github.io/argo-helm"
-  chart            = "argo-cd"
-  namespace        = kubernetes_namespace.argocd.metadata[0].name
-  create_namespace = false
-
-  values = [templatefile("${path.module}/yaml/argocd.yaml", {
-    clientID           = "argocd"
-    oidc_client_secret = keycloak_openid_client.argocd.client_secret
-    issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
-    admin_groups       = ["argocd-admin"]
-    })
-  ]
-}
-
 # add to config map argocd-cm for custom accounts and add admin user token login
 # kubectl -n argocd edit configmap argocd-cm
 # example:

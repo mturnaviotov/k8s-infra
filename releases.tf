@@ -15,13 +15,45 @@ locals {
     }
     "pdns" = {
       name      = "pdns"
-      chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.1/pdns-0.0.1.tgz"
+      chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.3/pdns-0.0.3.tgz"
       namespace = kubernetes_namespace.dns.metadata[0].name
-      version   = "0.0.1"
+      version   = "0.0.3"
       values = [templatefile("${path.module}/yaml/pdns.yaml", {
         zone_name = var.dns_private_zone_name
         password  = var.dns_server_password
       })]
+    }
+    "argocd" = {
+      name       = "argocd"
+      repository = "https://argoproj.github.io/argo-helm"
+      chart      = "argo-cd"
+      namespace  = kubernetes_namespace.argocd.metadata[0].name
+      version    = "9.1.3"
+
+      values = [templatefile("${path.module}/yaml/argocd.yaml", {
+        clientID           = "argocd"
+        oidc_client_secret = keycloak_openid_client.argocd.client_secret
+        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
+        admin_groups       = ["argocd-admin"]
+        })
+      ]
+    }
+    "cert-manager" = {
+      name      = "cert-manager"
+      chart     = "oci://quay.io/jetstack/charts/cert-manager"
+      namespace = kubernetes_namespace.cert_manager.metadata[0].name
+      version   = "v1.19.1"
+
+      set = [
+        {
+          name : "prometheus.enabled",
+          value : "true"
+        },
+        {
+          name  = "installCRDs"
+          value = "true"
+        }
+      ]
     }
   }
 }
@@ -39,5 +71,6 @@ module "helm" {
   repository    = lookup(each.value, "repository", "")
   chart_version = lookup(each.value, "version", "")
   namespace     = each.value.namespace
-  values        = lookup(each.value, "values", {})
+  values        = lookup(each.value, "values", [])
+  set           = lookup(each.value, "set", [])
 }

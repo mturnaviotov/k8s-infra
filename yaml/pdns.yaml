@@ -32,7 +32,7 @@ apiPassword: &pdns_pass "${password}"
 pdns:
   apiPassword: *pdns_pass # Replace with your admin password from env vars or secret manager
   zones:
-  - ${zone_name}}
+  - ${zone_name}
   env:
   - name: api_pdns
     value: "yes"

@@ -7,12 +7,13 @@ locals {
 }
 
 resource "keycloak_openid_client" "argocd" {
-  realm_id              = var.keycloak_realm
-  client_id             = "argocd"
-  name                  = "argocd"
-  enabled               = true
-  access_type           = "CONFIDENTIAL"
-  standard_flow_enabled = true
+  realm_id                  = var.keycloak_realm
+  client_id                 = "argocd"
+  name                      = "argocd"
+  enabled                   = true
+  access_type               = "CONFIDENTIAL"
+  standard_flow_enabled     = true
+  always_display_in_console = true
   valid_redirect_uris = [
     "https://argocd.${var.dns_private_zone_name}/auth/callback"
   ]

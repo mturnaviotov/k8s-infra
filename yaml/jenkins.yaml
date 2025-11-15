@@ -26,6 +26,13 @@ controller:
                   password: "${dockerhub_password}"
                   scope: GLOBAL
                   username: "${dockerhub_login}"
+              - usernamePassword:
+                  description: "my github pat account"
+                  id: "github_pat"
+                  password: "${github_pat}"
+                  scope: GLOBAL
+                  username: "{github_account}"
+
         jenkins:
           authorizationStrategy:
             globalMatrix:

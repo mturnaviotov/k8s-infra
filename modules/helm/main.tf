@@ -6,4 +6,5 @@ resource "helm_release" "app" {
   namespace        = var.namespace
   create_namespace = false
   values           = var.values
+  set              = var.set
 }

@@ -15,23 +15,6 @@ resource "kubernetes_namespace" "cert_manager" {
   }
 }
 
-#########################
-# Cert Manager Helm Release
-#########################
-
-# terraform import helm_release.cert_manager cert-manager/cert-manager
-resource "helm_release" "cert_manager" {
-  name             = "cert-manager"
-  chart            = "oci://quay.io/jetstack/charts/cert-manager"
-  namespace        = kubernetes_namespace.cert_manager.metadata[0].name
-  version          = "v1.19.1"
-  create_namespace = false
-  values = [<<EOF
-  prometheus:
-    enabled: true
-  EOF
-  ]
-}
 
 #########################
 # Local CA Cluster Issuer
@@ -53,10 +36,6 @@ resource "kubernetes_secret" "local_ca_key_pair" {
     "tls.crt" = file("${path.module}/ca.crt")
     "tls.key" = file("${path.module}/ca.key")
   }
-
-  depends_on = [
-    helm_release.cert_manager
-  ]
 }
 
 ## kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.1/cert-manager.crds.yaml
@@ -73,9 +52,4 @@ resource "kubernetes_manifest" "cluster_issuer_local_ca" {
       }
     }
   }
-
-  depends_on = [
-    helm_release.cert_manager,
-    kubernetes_secret.local_ca_key_pair
-  ]
 }

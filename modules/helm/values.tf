@@ -19,7 +19,7 @@ variable "chart" {
 variable "chart_version" {
   description = "Chart version"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "namespace" {
@@ -30,5 +30,15 @@ variable "namespace" {
 
 variable "values" {
   description = "values"
-  default     = ""
+  default     = []
 }
+
+variable "set" {
+  description = "List of set"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
+}
+
