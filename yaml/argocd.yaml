@@ -9,7 +9,6 @@ configs:
   cm:
     create: true
     admin.enabled: true
-    server.insecure: true
     application.instanceLabelKey: argocd.argoproj.io/instance
     oidc.tls.insecure.skip.verify: "true"
     oidc.config: |
@@ -19,6 +18,27 @@ configs:
       clientSecret: $oidc.keycloak.clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
     url: https://argocd.zone.internal
+
+  cmd-params-cm:
+    server.insecure: 'true'
+    applicationsetcontroller.enable.leader.election: 'false'
+    applicationsetcontroller.log.format: json
+    applicationsetcontroller.log.level: info
+    commitserver.log.format: json
+    commitserver.log.level: info
+    controller.log.format: json
+    controller.log.level: info
+    dexserver.log.format: json
+    dexserver.log.level: info
+    notificationscontroller.log.format: json
+    notificationscontroller.log.level: info
+    redis.server: argocd-redis:6379
+    repo.server: argocd-repo-server:8081
+    reposerver.log.format: json
+    reposerver.log.level: info
+    server.log.format: json
+    server.log.level: info
+    server.repo.server.strict.tls: 'false'
 
   rbac:
     policy.csv: |
@@ -33,11 +53,6 @@ configs:
     create: true
     extra:
       oidc.keycloak.clientSecret: "${oidc_client_secret}"
-
-  cmd-params-cm:
-    create: true
-    extra:
-      server.insecure: "true"
 
 controller:
   replicaCount: 1
