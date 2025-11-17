@@ -1,13 +1,15 @@
 # source of true https://raw.githubusercontent.com/grafana/alloy/main/operations/helm/charts/alloy/values.yaml
 # helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
+# ./yaml/alloy-tune.yaml
 alloy:
   mounts:
     varlog: true
+
   configMap:
     content: |
       logging {
         level  = "info"
-        format = "logfmt"
+        format = "json"
       }
 
       discovery.kubernetes "pods" {
@@ -15,22 +17,69 @@ alloy:
       }
 
       discovery.kubernetes "services" {
-        role = "pod"
+        role = "service"
+      }
+
+      discovery.kubernetes "nodes" {
+        role = "node"
+      }
+
+      discovery.kubernetes "ingresses" {
+        role = "ingress"
       }
 
       loki.source.kubernetes "pods" {
         targets    = discovery.kubernetes.pods.targets
-        forward_to = [loki.write.endpoint.receiver]
+        forward_to = [loki.relabel.k8s.receiver]
       }
 
       loki.source.kubernetes "services" {
         targets    = discovery.kubernetes.services.targets
-        forward_to = [loki.write.endpoint.receiver]
+        forward_to = [loki.relabel.k8s.receiver]
       }
 
-      loki.write "endpoint" {
+      loki.source.kubernetes "nodes" {
+        targets    = discovery.kubernetes.nodes.targets
+        forward_to = [loki.relabel.k8s.receiver]
+      }
+
+      loki.source.kubernetes "ingresses" {
+        targets    = discovery.kubernetes.ingresses.targets
+        forward_to = [loki.relabel.k8s.receiver]
+      }
+
+      loki.relabel "k8s" {
+        forward_to = [loki.write.remote.receiver]
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+        
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          target_label  = "container"
+        }
+
+        rule {
+          action = "labelmap"
+          regex  = "__meta_kubernetes_pod_label_(.+)"
+        }
+      }
+
+      loki.write "remote" {
         endpoint {
-            url = "https://loki.zone.internal/loki/api/v1/push"
-            tenant_id = "local"
+          url       = "https://loki.zone.internal/loki/api/v1/push"
+          tenant_id = "local"
         }
       }
