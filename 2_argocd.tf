@@ -11,22 +11,6 @@ variable "argocd_cluster_url" {
 }
 
 #########################
-# Namespace
-#########################
-
-resource "kubernetes_namespace" "argocd" {
-  metadata { name = "argocd" }
-}
-
-# add to config map argocd-cm for custom accounts and add admin user token login
-# kubectl -n argocd edit configmap argocd-cm
-# example:
-# data:
-#   accounts.admin: apiKey, login
-#   accounts.tech: apiKey, login
-#   accounts.tech.enabled: 'true'
-
-#########################
 # Service Account + RoleBinding
 #########################
 

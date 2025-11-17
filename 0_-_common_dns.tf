@@ -35,14 +35,3 @@ variable "dns_orb_zone" {
   default = "k8s.orb.local"
   type    = string
 }
-
-#########################
-# Namespaces
-#########################
-
-# terraform import kubernetes_namespace.dns dns
-resource "kubernetes_namespace" "dns" {
-  metadata {
-    name = "dns"
-  }
-}

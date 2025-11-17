@@ -35,21 +35,38 @@ controller:
 
         jenkins:
           authorizationStrategy:
-            globalMatrix:
-              entries:
-              - group:
+            roleBased:
+              roles:
+                global:
+                - entries:
+                  - group: "authenticated"
                   name: "admin"
+                  pattern: ".*"
                   permissions:
                   - "Overall/Administer"
-              - group:
-                  name: "authenticated"
+                - entries:
+                  - user: "user-admin"
+                  - group: "authenticated"
+                  - group: "jenkins-admin"
+                  name: "jenkins_admin"
+                  pattern: ".*"
                   permissions:
-                  - "Overall/Read"
-                  - "Overall/Administer"  
-              - group:
-                  name: "${jenkins_admin_group}"
-                  permissions:
-                  - "Overall/Administer"
+                  - "Overall/Administer"          
+            # globalMatrix:
+            #   entries:
+            #   - group:
+            #       name: "admin"
+            #       permissions:
+            #       - "Overall/Administer"
+            #   - group:
+            #       name: "authenticated"
+            #       permissions:
+            #       - "Overall/Read"
+            #       - "Overall/Administer"  
+            #   - group:
+            #       name: "${jenkins_admin_group}"
+            #       permissions:
+            #       - "Overall/Administer"
           clouds:
           - kubernetes:
               containerCap: 10
@@ -134,6 +151,7 @@ controller:
                   wellKnownOpenIDConfigurationUrl: "https://${oidc_issuer}/.well-known/openid-configuration"
               userIdStrategy: "caseInsensitive"
               userNameField: "preferred_username"
+              groupsFieldName: "groups"
           slaveAgentPort: 50000
           updateCenter:
             sites:
@@ -163,8 +181,8 @@ controller:
             sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
           prism: {}
           queueItemAuthenticator: {}
-          sSHD:
-            port: -1
+          #sSHD:
+          #  port: -1
           scriptApproval:
             forceSandbox: false
           updateSiteWarningsConfiguration: {}
@@ -187,8 +205,8 @@ controller:
           globalDefaultFlowDurabilityLevel: {}
           globalLibraries: {}
           globalUntrustedLibraries: {}
-          junitTestResultStorage:
-            storage: "file"
+          #junitTestResultStorage:
+          #  storage: "file"
           location:
             adminAddress: "${admin_email}"
             url: "https://${jenkins_url}/"

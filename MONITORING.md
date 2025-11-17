@@ -28,5 +28,5 @@ helm install -n mon loki grafana/loki -f loki.yaml
 
 '''
 helm install -n mon  grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator --version v5.20.0
-helm install -n mon kps prometheus-community/kube-prometheus-stack
+helm install -n mon kps prometheus-community/kube-prometheus-stack --version 79.5.0
 '''

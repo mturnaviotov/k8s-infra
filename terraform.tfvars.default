@@ -1,10 +1,24 @@
 # fulfill this file with your variables before running terraform
 # and do not commit it to version control
 # you can copy this file to terraform.tfvars and edit it there
-keycloak_realm               = "cluster"
-keycloak_admin_client_id     = "admin-cli"
-keycloak_admin_client_secret = "admin-cli-client-secret"
-keycloak_admin_url           = "https://keycloak.zone.internal" # "http://keycloak.(namespace).svc.cluster.local:8080"
-keycloak_admin_realm         = "master"
+# here wi will create all clients for our cluster
+
+keycloak_admin_url           = "http://keycloak.(namespace).svc.cluster.local:8080"
+
+# Master realm, usually here we have a server wide privileges
+keycloak_admin_realm         = "master" # admin realm
+
+# user with , realm admin roles
+# client id (application),  not login !
+# should have Direct access grants and service accounts roles enabled
+keycloak_admin_client_id     = "admin-cli" 
+keycloak_admin_client_secret = "admin-cli-client-secret" 
+
+# user name
 keycloak_admin_username      = "admin-user"
+# password, terraform need it
 keycloak_admin_password      = "admin-password"
+
+# our work realm for cluster applications
+keycloak_realm               = "cluster"
+

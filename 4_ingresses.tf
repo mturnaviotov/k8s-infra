@@ -21,6 +21,40 @@ locals {
       service_name = "keycloak"
       service_port = 8080
     }
+
+    ### monitoring
+
+    "loki" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "loki"
+      service_port = 3100
+    }
+    "grafana" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "kps-grafana"
+      service_port = 80
+    }
+    "prometheus" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "kps-kube-prometheus-stack-prometheus"
+      service_port = 9090
+    }
+    "alerts" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "alertmanager-operated"
+      service_port = 9093
+    }
+    "k8metrics" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "kps-kube-state-metrics"
+      service_port = 8080
+    }
+    "alloy" = {
+      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      service_name = "kps-kube-state-metrics"
+      service_port = 8080
+    }
+    ###
     # we have static ip via for pdns, no ingress needed
     # "pdns" = {
     #   namespace    = kubernetes_namespace.pdns.metadata[0].name

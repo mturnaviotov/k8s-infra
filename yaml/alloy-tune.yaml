@@ -1,3 +1,4 @@
+# source of true https://raw.githubusercontent.com/grafana/alloy/main/operations/helm/charts/alloy/values.yaml
 # helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
 alloy:
   mounts:
@@ -13,14 +14,23 @@ alloy:
         role = "pod"
       }
 
+      discovery.kubernetes "services" {
+        role = "pod"
+      }
+
       loki.source.kubernetes "pods" {
         targets    = discovery.kubernetes.pods.targets
         forward_to = [loki.write.endpoint.receiver]
       }
 
+      loki.source.kubernetes "services" {
+        targets    = discovery.kubernetes.services.targets
+        forward_to = [loki.write.endpoint.receiver]
+      }
+
       loki.write "endpoint" {
         endpoint {
-            url = "http://loki.mon.svc.cluster.local:80/loki/api/v1/push"
+            url = "https://loki.zone.internal/loki/api/v1/push"
             tenant_id = "local"
         }
       }

@@ -9,11 +9,6 @@
 #########################
 
 # terraform import kubernetes_namespace.ingress ingress
-resource "kubernetes_namespace" "ingress" {
-  metadata {
-    name = "ingress"
-  }
-}
 
 # # terraform import kubernetes_manifest.traefik_ingressroute 'apiVersion=traefik.io/v1alpha1,kind=IngressRoute,namespace=ingress,name=traefik-route'
 resource "kubernetes_manifest" "traefik_ingressroute" {

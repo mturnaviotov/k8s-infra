@@ -1,22 +1,6 @@
 # Terraform manifest: net-cert-manager.tf
 
 #########################
-# Variables
-#########################
-
-#########################
-# Namespaces
-#########################
-
-# terraform import kubernetes_namespace.cert_manager cert-manager
-resource "kubernetes_namespace" "cert_manager" {
-  metadata {
-    name = "cert-manager"
-  }
-}
-
-
-#########################
 # Local CA Cluster Issuer
 #########################
 

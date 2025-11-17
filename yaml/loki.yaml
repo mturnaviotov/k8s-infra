@@ -402,7 +402,7 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#common_config for more info on how to provide a common configuration
   commonConfig:
     path_prefix: /var/loki
-    replication_factor: 3
+    replication_factor: 1
     # -- The gRPC address of the compactor. The use of compactor_grpc_address is prefered over compactor_address.
     # If a customized compactor_address is set, compactor_grpc_address should be set to an empty string.
     compactor_grpc_address: '{{ include "loki.compactorAddress" . }}'
@@ -562,7 +562,7 @@ lokiCanary:
   # -- If false, it will write to stdout and an Agent will be needed to scrape and send the logs --
   push: true
   # -- If set overwrites the default value set by loki.host helper function. Use this if gateway not enabled.
-  lokiurl: null
+  lokiurl: null #loki.mon:3100
   # -- The name of the label to look for at loki when doing the checks.
   labelname: pod
   # -- Additional annotations for the `loki-canary` Daemonset

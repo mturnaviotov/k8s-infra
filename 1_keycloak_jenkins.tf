@@ -1,0 +1,40 @@
+resource "keycloak_openid_client" "jenkins" {
+  realm_id                  = var.keycloak_realm
+  client_id                 = "jenkins"
+  name                      = "jenkins"
+  enabled                   = true
+  access_type               = "CONFIDENTIAL"
+  standard_flow_enabled     = true
+  always_display_in_console = true
+  valid_redirect_uris = [
+    "https://jenkins.${var.dns_private_zone_name}/*"
+  ]
+}
+
+resource "keycloak_openid_client_scope" "jenkins_groups" {
+  realm_id               = var.keycloak_realm
+  name                   = "jenkins_groups"
+  include_in_token_scope = true
+  gui_order              = 1
+}
+
+resource "keycloak_openid_group_membership_protocol_mapper" "jenkins_groups_mapper" {
+  realm_id        = var.keycloak_realm
+  client_scope_id = keycloak_openid_client_scope.jenkins_groups.id
+  name            = "jenkins_groups"
+  claim_name      = "groups"
+  full_path       = false
+}
+
+# configure argocd openid client default scopes
+# resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
+#   realm_id  = var.keycloak_realm
+#   client_id = keycloak_openid_client.jenkins.id
+#   default_scopes = [
+#     "profile",
+#     "email",
+#     "roles",
+#     "web-origins",
+#     keycloak_openid_client_scope.jenkins_groups.name,
+#   ]
+# }

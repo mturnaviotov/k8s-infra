@@ -1,3 +1,16 @@
+
+variable "name_keycloak" {
+  description = "Name for referencing service"
+  default     = "keycloak"
+  type        = string
+}
+
+variable "keycloak_realm" {
+  description = "Keycloak realm name"
+  default     = "master"
+  type        = string
+}
+
 variable "keycloak_admin_client_id" {
   description = "Keycloak admin client ID"
   type        = string

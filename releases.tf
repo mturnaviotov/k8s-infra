@@ -13,6 +13,7 @@ locals {
         })
       ]
     }
+
     "pdns" = {
       name      = "pdns"
       chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.3/pdns-0.0.3.tgz"
@@ -23,21 +24,7 @@ locals {
         password  = var.dns_server_password
       })]
     }
-    "argocd" = {
-      name       = "argocd"
-      repository = "https://argoproj.github.io/argo-helm"
-      chart      = "argo-cd"
-      namespace  = kubernetes_namespace.argocd.metadata[0].name
-      version    = "9.1.3"
 
-      values = [templatefile("${path.module}/yaml/argocd.yaml", {
-        clientID           = "argocd"
-        oidc_client_secret = keycloak_openid_client.argocd.client_secret
-        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
-        admin_groups       = ["argocd-admin"]
-        })
-      ]
-    }
     "cert-manager" = {
       name      = "cert-manager"
       chart     = "oci://quay.io/jetstack/charts/cert-manager"
@@ -55,6 +42,24 @@ locals {
         }
       ]
     }
+
+    ####
+    "argocd" = {
+      name       = "argocd"
+      repository = "https://argoproj.github.io/argo-helm"
+      chart      = "argo-cd"
+      namespace  = kubernetes_namespace.argocd.metadata[0].name
+      version    = "9.1.3"
+
+      values = [templatefile("${path.module}/yaml/argocd.yaml", {
+        clientID           = "argocd"
+        oidc_client_secret = keycloak_openid_client.argocd.client_secret
+        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
+        admin_groups       = ["argocd-admin"]
+        })
+      ]
+    }
+    ######
   }
 }
 
