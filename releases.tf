@@ -19,6 +19,22 @@ locals {
 
     ####
 
+    "external-dns" = {
+      name       = "external-dns"
+      namespace  = kubernetes_namespace.ns["dns"].metadata[0].name
+      repository = "https://kubernetes-sigs.github.io/external-dns/"
+      chart      = "external-dns"
+      version    = "1.19.0"
+
+      values = [templatefile("${path.module}/yaml/external-dns.yaml", {
+        dns_server_name       = "pdns"
+        dns_server_address    = "http://pdns.${kubernetes_namespace.ns["dns"].metadata[0].name}.${var.dns_cluster_zone}:${var.dns_server_port}"
+        dns_server_password   = var.dns_server_password
+        dns_private_zone_name = var.dns_private_zone_name
+        })
+      ]
+
+    }
     "pdns" = {
       name      = "pdns"
       chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.3/pdns-0.0.3.tgz"
@@ -174,8 +190,7 @@ locals {
 }
 
 # terraform import example
-# #terraform import module.ingress_dashboard.kubernetes_manifest.ingress 'apiVersion=networking.k8s.io/v1,kind=Ingress,namespace=kubernetes-dashboard,name=ingress-dashboard'
-
+# terraform import 'module.helm["external-dns"].helm_release.app' dns/external-dns
 module "helm" {
   for_each = local.helm_charts
 

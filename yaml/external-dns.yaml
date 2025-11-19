@@ -1,0 +1,17 @@
+txtOwnerId: k8s-cluster
+interval: 1m
+policy: sync
+logFormat: json
+sources:
+- service
+- ingress
+- pod
+logLevel: debug
+provider: pdns
+extraArgs:
+- "--pdns-server=${dns_server_address}"
+- "--pdns-server-id=localhost"
+- "--pdns-api-key=${dns_server_password}"
+- "--domain-filter=${dns_private_zone_name}"
+- "--zone-name-filter=${dns_private_zone_name}"
+- "--regex-domain-filter=${dns_private_zone_name}"
