@@ -11,9 +11,10 @@ Networks, DNS, monitoring, CI/CD for providing whole Infrastructure as a code
 - [x] Cert Manager  (SSL)
 - [x] K8S Dashboard (UI)
 - [x] KeyCloak      (AAA)   - installation via quick start script (kubectl apply -f...)
-- [x] Jenkins       (CI/CD) 
-- [x] ArgoCD        (CD)    - OIDC with KeyCloak
+- [x] Jenkins       (CI/CD) - SSO
+- [x] ArgoCD        (CD)    - SSO
 - [x] Test ToDo Application deployed via ArgoCD (CD)
+- [x] Alloy + Loki + Prometheus + Grafana (SSO)
 
 # Installation
 

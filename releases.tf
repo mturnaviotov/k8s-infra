@@ -1,6 +1,9 @@
 locals {
 
   helm_charts = {
+
+    #### NETWORKING BASICS ####
+
     "traefik" = {
       name       = "traefik"
       repository = "https://helm.traefik.io/traefik"
@@ -14,6 +17,8 @@ locals {
       ]
     }
 
+    ####
+
     "pdns" = {
       name      = "pdns"
       chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.3/pdns-0.0.3.tgz"
@@ -24,6 +29,8 @@ locals {
         password  = var.dns_server_password
       })]
     }
+
+    ####
 
     "cert-manager" = {
       name      = "cert-manager"
@@ -43,7 +50,37 @@ locals {
       ]
     }
 
+    #### NETWORKING BASICS FINISH ####
+
+    #### CI/CD ####
+    "jenkins" = {
+      name       = var.name_jenkins
+      repository = "https://charts.jenkins.io"
+      chart      = var.name_jenkins
+      namespace  = kubernetes_namespace.jenkins.metadata[0].name
+      version    = "5.8.110"
+
+      values = [templatefile("${path.module}/yaml/jenkins.yaml", {
+        admin_password       = var.jenkins_admin_password
+        admin_email          = "${var.name_jenkins}@${var.keycloak_realm}"
+        dockerhub_login      = var.jenkins_dockerhub_login
+        dockerhub_password   = var.jenkins_dockerhub_password
+        oidc_secret          = keycloak_openid_client.jenkins.client_secret
+        jenkins_admin_group  = "${var.name_jenkins}-admin"
+        jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace.jenkins.metadata[0].name}.${var.dns_cluster_zone}"
+        jenkins_url          = "${var.name_jenkins}.${var.dns_private_zone_name}"
+        kubernetes_namespace = kubernetes_namespace.jenkins.metadata[0].name
+        oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
+        oidc_clientid        = var.name_jenkins
+        dns_zone             = var.dns_cluster_zone
+        github_account       = var.github_account
+        github_pat           = var.github_pat
+        })
+      ]
+    }
+
     ####
+
     "argocd" = {
       name       = "argocd"
       repository = "https://argoproj.github.io/argo-helm"
@@ -59,7 +96,55 @@ locals {
         })
       ]
     }
-    ######
+
+    #### CI/CD FINISH ####
+
+    #### MONITORING ####
+
+    "alloy" = {
+      name       = "alloy"
+      repository = "https://grafana.github.io/helm-charts"
+      chart      = "alloy"
+      namespace  = kubernetes_namespace.monitoring.metadata[0].name
+      version    = "1.4.0"
+
+      values = [templatefile("${path.module}/yaml/alloy.yaml", {
+        loki_url = "https://loki.${var.dns_private_zone_name}"
+        })
+      ]
+    }
+
+    ####
+
+    "loki" = {
+      name       = "loki"
+      repository = "https://grafana.github.io/helm-charts"
+      chart      = "loki"
+      namespace  = kubernetes_namespace.monitoring.metadata[0].name
+      version    = "6.46.0"
+
+      values = [templatefile("${path.module}/yaml/loki.yaml", {})
+      ]
+    }
+    ####
+
+    "kps" = {
+      name       = "kps"
+      repository = "https://prometheus-community.github.io/helm-charts"
+      chart      = "kube-prometheus-stack"
+      namespace  = kubernetes_namespace.monitoring.metadata[0].name
+      version    = "79.5.0"
+
+      values = [templatefile("${path.module}/yaml/kps.yaml", {
+        clientID = "grafana"
+        #oidc_client_secret = keycloak_openid_client.grafana.client_secret
+        issuer       = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
+        admin_groups = ["grafana-admin"]
+      })]
+    }
+
+    #### MONITORING FINISHED ####
+
   }
 }
 

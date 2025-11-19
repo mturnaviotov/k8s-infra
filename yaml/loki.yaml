@@ -1017,9 +1017,22 @@ gateway:
     enableIPv6: true
     # -- NGINX log format
     logFormat: |-
-      main '$remote_addr - $remote_user [$time_local]  $status '
-              '"$request" $body_bytes_sent "$http_referer" '
-              '"$http_user_agent" "$http_x_forwarded_for"';
+      main escape=json
+          '{'
+            '"time_local": "$time_local",'
+            '"remote_addr": "$remote_addr",'
+            '"request_method": "$request_method",'
+            '"request_uri": "$request_uri",'
+            '"server_protocol": "$server_protocol",'
+            '"status": $status,'
+            '"body_bytes_sent": $body_bytes_sent,'
+            '"http_referer": "$http_referer",'
+            '"http_user_agent": "$http_user_agent",'
+            '"request_time": $request_time,'
+            '"upstream_response_time": "$upstream_response_time",'
+            '"host": "$host",'
+            '"x_forwarded_for": "$http_x_forwarded_for"'
+          '}';
     # -- Allows appending custom configuration to the server block
     serverSnippet: ""
     # -- Allows appending custom configuration to the http block, passed through the `tpl` function to allow templating

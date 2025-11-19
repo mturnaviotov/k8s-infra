@@ -1,7 +1,7 @@
 locals {
-  groups = ["argocd-admin", "jenkins-admin"]
+  groups = ["argocd-admin", "jenkins-admin", "grafana-admin"]
   user_map_to_groups = {
-    user-admin = ["argocd-admin", "jenkins-admin"]
+    user-admin = ["argocd-admin", "jenkins-admin", "grafana-admin"]
   }
 }
 

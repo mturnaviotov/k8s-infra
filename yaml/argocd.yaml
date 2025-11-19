@@ -24,6 +24,8 @@ configs:
     applicationsetcontroller.enable.leader.election: 'false'
     applicationsetcontroller.log.format: json
     applicationsetcontroller.log.level: info
+    applicationcontroller.log.format: json
+    applicationcontroller.log.level: info
     commitserver.log.format: json
     commitserver.log.level: info
     controller.log.format: json
@@ -39,7 +41,6 @@ configs:
     server.log.format: json
     server.log.level: info
     server.repo.server.strict.tls: 'false'
-
   rbac:
     policy.csv: |
 %{ for group in admin_groups ~}

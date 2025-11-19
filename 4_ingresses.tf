@@ -51,8 +51,8 @@ locals {
     }
     "alloy" = {
       namespace    = kubernetes_namespace.monitoring.metadata[0].name
-      service_name = "kps-kube-state-metrics"
-      service_port = 8080
+      service_name = "alloy"
+      service_port = 12345
     }
     ###
     # we have static ip via for pdns, no ingress needed

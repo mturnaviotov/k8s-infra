@@ -2,8 +2,12 @@
 # kubectl get cm -n argocd argocd-cmd-params-cm -o yaml | tfk8s --strip -o sample.tf
 
 # k -n argocd rollout restart deployment argocd-applicationset-controller argocd-notifications-controller argocd-repo-server argocd-server
-#terraform import kubernetes_manifest.configmap_argocd_argocd_cmd_params_cm 'apiVersion=v1,kind=ConfigMap,namespace=argocd,name=argocd-cmd-params-cm'
-resource "kubernetes_manifest" "configmap_argocd_argocd_cmd_params_cm" {
+#terraform import kubernetes_manifest.configmap_argocd_cmd_params_cm 'apiVersion=v1,kind=ConfigMap,namespace=argocd,name=argocd-cmd-params-cm'
+
+# TODO: fix initial values.yaml, currently it now applied correctly
+# k -n argocd delete cm argocd-cmd-params-cm
+# k -n argocd rollout restart deployment argocd-applicationset-controller argocd-notifications-controller argocd-repo-server argocd-server 
+resource "kubernetes_manifest" "configmap_argocd_cmd_params_cm" {
   manifest = {
     "apiVersion" = "v1"
     "kind"       = "ConfigMap"

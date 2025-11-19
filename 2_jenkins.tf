@@ -43,38 +43,6 @@ resource "kubernetes_namespace" "jenkins" {
   }
 }
 
-# #########################
-# # Jenkins Helm Chart
-# #########################
-
-# # terraform import helm_release.jenkins jenkins/jenkins
-resource "helm_release" "jenkins" {
-  name             = var.name_jenkins
-  repository       = "https://charts.jenkins.io"
-  chart            = var.name_jenkins
-  namespace        = kubernetes_namespace.jenkins.metadata[0].name
-  create_namespace = false
-
-  values = [templatefile("${path.module}/yaml/jenkins.yaml", {
-    admin_password       = var.jenkins_admin_password
-    admin_email          = "${var.name_jenkins}@${var.keycloak_realm}"
-    dockerhub_login      = var.jenkins_dockerhub_login
-    dockerhub_password   = var.jenkins_dockerhub_password
-    oidc_secret          = keycloak_openid_client.jenkins.client_secret
-    jenkins_admin_group  = "${var.name_jenkins}-admin"
-    jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace.jenkins.metadata[0].name}.${var.dns_cluster_zone}"
-    jenkins_url          = "${var.name_jenkins}.${var.dns_private_zone_name}"
-    kubernetes_namespace = kubernetes_namespace.jenkins.metadata[0].name
-    oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
-    oidc_clientid        = var.name_jenkins
-    dns_zone             = var.dns_cluster_zone
-    github_account       = var.github_account
-    github_pat           = var.github_pat
-    })
-  ]
-
-}
-
 output "jenkins_admin_password" {
   value = "\n=====\nJenkins password is:\nkubectl -n ${kubernetes_namespace.jenkins.metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'\n"
 }

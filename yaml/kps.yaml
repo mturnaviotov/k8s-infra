@@ -1,0 +1,45 @@
+grafana:
+  enabled: true
+  envFromSecret: oauth-grafana
+  grafana.ini:
+    server:
+      root_url: https://grafana.zone.internal
+      domain: grafana.zone.internal
+
+    auth:
+      disable_login_form: true
+      disable_signout_menu: false
+
+    auth.generic_oauth:
+      enabled: true
+      name: Keycloak
+      allow_sign_up: true
+      client_id: "${clientID}"
+      client_secret: "$${OAUTH_CLIENT_SECRET}"
+      scopes: openid profile email roles
+
+      auth_url: ${issuer}/protocol/openid-connect/auth
+      token_url: ${issuer}/protocol/openid-connect/token
+      api_url: ${issuer}/protocol/openid-connect/userinfo
+%{ for group in admin_groups ~}
+      role_attribute_path: "contains(realm_access.roles[*], '${group}') && 'Admin' || 'Viewer'"
+%{ endfor ~}
+
+      login_attribute_path: preferred_username
+
+    #security:
+    #  admin_user: disabled
+    #  admin_password: disabled
+
+  env:
+    GF_AUTH_GENERIC_OAUTH_SKIP_SSL_VERIFICATION: "true"
+
+  ingress:
+    enabled: false
+    ingressClassName: traefik
+    hosts:
+    - grafana.zone.internal
+    tls:
+    - secretName: grafana-tls
+      hosts:
+      - grafana.zone.internal
