@@ -32,17 +32,6 @@ variable "jenkins_dockerhub_password" {
   sensitive   = true
 }
 
-# #########################
-# # Namespaces
-# #########################
-
-# # terraform import kubernetes_namespace.jenkins jenkins
-resource "kubernetes_namespace" "jenkins" {
-  metadata {
-    name = "jenkins"
-  }
-}
-
 output "jenkins_admin_password" {
-  value = "\n=====\nJenkins password is:\nkubectl -n ${kubernetes_namespace.jenkins.metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'\n"
+  value = "\n=====\nJenkins password is:\nkubectl -n ${kubernetes_namespace.ns["jenkins"].metadata[0].name} get secrets jenkins -o json | jq '.data | map_values(@base64d)'\n"
 }

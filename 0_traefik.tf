@@ -1,23 +1,13 @@
 # Terraform manifest: net-traefik.tf
 
-#########################
-# Variables
-#########################
-
-#########################
-# Namespaces
-#########################
-
-# terraform import kubernetes_namespace.ingress ingress
-
-# # terraform import kubernetes_manifest.traefik_ingressroute 'apiVersion=traefik.io/v1alpha1,kind=IngressRoute,namespace=ingress,name=traefik-route'
+# terraform import kubernetes_manifest.traefik_ingressroute 'apiVersion=traefik.io/v1alpha1,kind=IngressRoute,namespace=ingress,name=traefik-route'
 resource "kubernetes_manifest" "traefik_ingressroute" {
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
       name      = "traefik"
-      namespace = kubernetes_namespace.ingress.metadata[0].name
+      namespace = kubernetes_namespace.ns["ingress"].metadata[0].name
     }
     spec = {
       entryPoints = ["web", "websecure"]

@@ -9,7 +9,7 @@ resource "kubernetes_manifest" "argocd_project_todo" {
     kind       = "AppProject"
     metadata = {
       name      = "todo"
-      namespace = kubernetes_namespace.argocd.metadata[0].name
+      namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
     }
     spec = {
       description = "Todo application project for testing"
@@ -37,7 +37,7 @@ resource "kubernetes_manifest" "argocd_app_todo" {
     kind       = "Application"
     metadata = {
       name      = "todo"
-      namespace = kubernetes_namespace.argocd.metadata[0].name
+      namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
     }
     spec = {
       project = "todo"

@@ -13,7 +13,7 @@ resource "kubernetes_secret" "local_ca_key_pair" {
 
   metadata {
     name      = "local-ca-key-pair"
-    namespace = kubernetes_namespace.cert_manager.metadata[0].name
+    namespace = kubernetes_namespace.ns["cert-manager"].metadata[0].name
   }
 
   data = {

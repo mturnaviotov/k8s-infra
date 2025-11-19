@@ -2,22 +2,22 @@ locals {
 
   ingresses = {
     "board" = {
-      namespace    = kubernetes_namespace.k8s-dashboard.metadata[0].name
+      namespace    = kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name
       service_name = "kubernetes-dashboard-web"
       service_port = 8000
     }
     "argocd" = {
-      namespace    = kubernetes_namespace.argocd.metadata[0].name
+      namespace    = kubernetes_namespace.ns["argocd"].metadata[0].name
       service_name = "argocd-server"
       service_port = 80
     }
     "jenkins" = {
-      namespace    = kubernetes_namespace.jenkins.metadata[0].name
+      namespace    = kubernetes_namespace.ns["jenkins"].metadata[0].name
       service_name = "jenkins"
       service_port = 8080
     }
     "keycloak" = {
-      namespace    = kubernetes_namespace.auth.metadata[0].name
+      namespace    = kubernetes_namespace.ns["auth"].metadata[0].name
       service_name = "keycloak"
       service_port = 8080
     }
@@ -25,32 +25,32 @@ locals {
     ### monitoring
 
     "loki" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "loki"
       service_port = 3100
     }
     "grafana" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "kps-grafana"
       service_port = 80
     }
     "prometheus" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "kps-kube-prometheus-stack-prometheus"
       service_port = 9090
     }
     "alerts" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "alertmanager-operated"
       service_port = 9093
     }
     "k8metrics" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "kps-kube-state-metrics"
       service_port = 8080
     }
     "alloy" = {
-      namespace    = kubernetes_namespace.monitoring.metadata[0].name
+      namespace    = kubernetes_namespace.ns["mon"].metadata[0].name
       service_name = "alloy"
       service_port = 12345
     }

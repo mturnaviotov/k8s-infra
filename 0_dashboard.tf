@@ -1,47 +1,5 @@
 # Terraform manifest: dashboard.tf
 
-#########################
-# Variables
-#########################
-
-#########################
-# Namespace
-#########################
-
-# terraform import kubernetes_namespace.k8s-dashboard kubernetes-dashboard
-resource "kubernetes_namespace" "k8s-dashboard" {
-  metadata { name = "kubernetes-dashboard" }
-}
-
-#########################
-# Dashboard
-#########################
-
-# terraform import helm_release.kubernetes_dashboard kubernetes-dashboard/kubernetes-dashboard
-resource "helm_release" "kubernetes_dashboard" {
-  name             = "kubernetes-dashboard"
-  namespace        = kubernetes_namespace.k8s-dashboard.metadata[0].name
-  repository       = "https://kubernetes.github.io/dashboard/"
-  chart            = "kubernetes-dashboard"
-  version          = "7.13.0"
-  create_namespace = false
-
-  values = [
-    yamlencode({
-      protocolHttp = true
-      service = {
-        type = "ClusterIP"
-      }
-      ingress = {
-        enabled = false
-      }
-      metricsScraper = {
-        enabled = true
-      }
-    })
-  ]
-}
-
 ######################### !!!!!!!! DANGEROUS !!!!!!!!! #########################
 # Dashboard Admin User and RoleBinding
 # kubectl delete clusterrolebinding admin-user
@@ -56,7 +14,7 @@ resource "kubernetes_manifest" "dashboard_admin_user" {
 
     metadata = {
       name      = "admin-user"
-      namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
+      namespace = kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name
     }
   }
 
@@ -78,7 +36,7 @@ resource "kubernetes_manifest" "dashboard_admin_rolebinding" {
       {
         kind      = "ServiceAccount"
         name      = "admin-user"
-        namespace = kubernetes_namespace.k8s-dashboard.metadata[0].name
+        namespace = kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name
       }
     ]
     roleRef = {
@@ -95,5 +53,5 @@ resource "kubernetes_manifest" "dashboard_admin_rolebinding" {
 }
 
 output "k8s-dashboard_bearer" {
-  value = "\n=====\nJWT for Dashboard:\nkubectl -n ${kubernetes_namespace.k8s-dashboard.metadata[0].name} create token admin-user --duration=1999h\n, and paste the token to login to the dashboard UI\n"
+  value = "\n=====\nJWT for Dashboard:\nkubectl -n ${kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name} create token admin-user --duration=1999h\n, and paste the token to login to the dashboard UI\n"
 }

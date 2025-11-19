@@ -17,7 +17,7 @@ variable "argocd_cluster_url" {
 resource "kubernetes_service_account" "argocd_access" {
   metadata {
     name      = "argocd-access"
-    namespace = kubernetes_namespace.argocd.metadata[0].name
+    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
   }
 }
 
@@ -56,7 +56,7 @@ resource "kubernetes_secret_v1" "argocd_access_token" {
 data "kubernetes_config_map" "kube_root_ca" {
   metadata {
     name      = "kube-root-ca.crt"
-    namespace = kubernetes_namespace.argocd.metadata[0].name
+    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
   }
 }
 
@@ -67,7 +67,7 @@ data "kubernetes_config_map" "kube_root_ca" {
 resource "kubernetes_secret" "argocd_cluster_orbstack" {
   metadata {
     name      = "orbstack"
-    namespace = kubernetes_namespace.argocd.metadata[0].name
+    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
     labels = {
       "argocd.argoproj.io/secret-type" = "cluster"
     }
@@ -93,5 +93,5 @@ resource "kubernetes_secret" "argocd_cluster_orbstack" {
 
 output "argocd_initial_admin_password" {
   description = "Initial ArgoCD admin password (decoded)\n"
-  value       = "\n=====\nArgoCD admin password:\nkubectl -n ${kubernetes_namespace.argocd.metadata[0].name} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode\n"
+  value       = "\n=====\nArgoCD admin password:\nkubectl -n ${kubernetes_namespace.ns["argocd"].metadata[0].name} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode\n"
 }
