@@ -139,7 +139,7 @@ alloy:
         }
       }
 
-      // POWERDNS
+      // PowerDNS
       prometheus.scrape "powerdns1" {
         targets = [{"__address__" = "pdns.dns.svc.cluster.local:8081","__metrics_path__" = "/metrics"}]
         http_headers = {"X-API-KEY" = [ "123123123" ]}
@@ -152,31 +152,20 @@ alloy:
         forward_to = [prometheus.remote_write.prom.receiver]
       }
 
-      prometheus.scrape "powerdns2" {
-        targets = [{"__address__" = "pdns.dns.svc.cluster.local:8081","__metrics_path__" = "/api/v1/servers/localhost/statistics"}]
-        http_headers = {"X-API-KEY" = [ "123123123" ]}
-        basic_auth {
-          username = "admin"
-          password = "123123123"
-        }
-
-        scrape_interval = "15s"
-        forward_to = [prometheus.remote_write.prom.receiver]
-      }
-
-      // POWERDNS
+      // Jenkins
       prometheus.scrape "jenkins" {
         scheme = "https"
         targets = [{"__address__" = "jenkins.zone.internal","__metrics_path__" = "/prometheus/"}]
-
+        tls_config {
+          insecure_skip_verify = true 
+        }
         scrape_interval = "15s"
         forward_to = [prometheus.remote_write.prom.receiver]
       }
 
       prometheus.remote_write "prom" {
         endpoint {
-          url = "http://kps-kube-prometheus-stack-prometheus.mon.svc.cluster.local:8080"
-          // "https://prometheus.zone.internal/"
+          url = "http://kps-kube-prometheus-stack-prometheus.mon.svc.cluster.local:9090/api/v1/write"
           tls_config { insecure_skip_verify = true }
         }
       }
