@@ -5,7 +5,7 @@
 alloy:
   mounts:
     varlog: true
-    containerspath: /var/log/pods # Для більшості CRI/Containerd
+    containerspath: /var/log/pods
 
   config:
     table_manager:
@@ -37,8 +37,8 @@ alloy:
         path_targets = [{
             // Monitor syslog to scrape node-logs
             __path__  = "/var/log/pods/*",
-            job       = "node/syslog",
-            node_name = sys.env("HOSTNAME"),
+            //job       = "node/syslog",
+            //node_name = sys.env("HOSTNAME"),
             //cluster   = orbstack,
         }]
       }
@@ -47,7 +47,7 @@ alloy:
         // Collect logs from the default listen address.
         // local.file_match.logs.targets
         targets = [
-          {__path__ = "/var/log/pods/*", "color" = "pink"},
+          {__path__ = "/var/log/pods", "color" = "pink"},
         ]
 
         forward_to = [loki.write.loki.receiver]
@@ -125,20 +125,58 @@ alloy:
         }
       }
 
-      // loki.source.kubernetes tails logs from Kubernetes containers using the Kubernetes API.
       loki.source.kubernetes "pod_logs" {
         targets    = discovery.relabel.pod_logs.output
         forward_to = [loki.process.pod_logs.receiver]
       }
 
-      // loki.process receives log entries from other Loki components, applies one or more processing stages,
-      // and forwards the results to the list of receivers in the component's arguments.
       loki.process "pod_logs" {
+        forward_to = [loki.write.loki.receiver]
         stage.static_labels {
-            values = {
-              cluster = "orbstack",
-            }
+          values = {
+            cluster = "orbstack",
+          }
+        }
+      }
+
+      // POWERDNS
+      prometheus.scrape "powerdns1" {
+        targets = [{"__address__" = "pdns.dns.svc.cluster.local:8081","__metrics_path__" = "/metrics"}]
+        http_headers = {"X-API-KEY" = [ "123123123" ]}
+        basic_auth {
+          username = "admin"
+          password = "123123123"
         }
 
-        forward_to = [loki.write.loki.receiver]
+        scrape_interval = "15s"
+        forward_to = [prometheus.remote_write.prom.receiver]
+      }
+
+      prometheus.scrape "powerdns2" {
+        targets = [{"__address__" = "pdns.dns.svc.cluster.local:8081","__metrics_path__" = "/api/v1/servers/localhost/statistics"}]
+        http_headers = {"X-API-KEY" = [ "123123123" ]}
+        basic_auth {
+          username = "admin"
+          password = "123123123"
+        }
+
+        scrape_interval = "15s"
+        forward_to = [prometheus.remote_write.prom.receiver]
+      }
+
+      // POWERDNS
+      prometheus.scrape "jenkins" {
+        scheme = "https"
+        targets = [{"__address__" = "jenkins.zone.internal","__metrics_path__" = "/prometheus/"}]
+
+        scrape_interval = "15s"
+        forward_to = [prometheus.remote_write.prom.receiver]
+      }
+
+      prometheus.remote_write "prom" {
+        endpoint {
+          url = "http://kps-kube-prometheus-stack-prometheus.mon.svc.cluster.local:8080"
+          // "https://prometheus.zone.internal/"
+          tls_config { insecure_skip_verify = true }
+        }
       }
