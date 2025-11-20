@@ -6,12 +6,9 @@ locals {
 }
 ######################
 resource "keycloak_realm" "cluster" {
-  realm             = var.keycloak_realm
-  enabled           = true
-  display_name      = "Cluster"
-  display_name_html = "<b>Cluster</b>"
-
-  login_theme = "base"
+  realm        = var.keycloak_realm
+  enabled      = true
+  display_name = "Cluster"
 
   access_code_lifespan = "1h"
 
