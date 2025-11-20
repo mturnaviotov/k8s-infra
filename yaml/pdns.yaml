@@ -1,61 +1,62 @@
+apiPassword: "${password}"
+image:
+  pullPolicy: IfNotPresent
+  repository: powerdns/pdns-auth-master
 ingress:
-  enabled: true
-  host: pdns.${zone_name}
-  ClusterIP: "192.168.194.130"
-  port: 8081
+  ClusterIP: 192.168.194.130
   annotations:
-    kubernetes.io/ingress.className: traefik
     cert-manager.io/cluster-issuer: local-ca
-    external-dns.alpha.kubernetes.io/hostname: pdns.${zone_name}
-    traefik.ingress.kubernetes.io/router.entrypoints: "web"
+    external-dns.alpha.kubernetes.io/hostname: "pdns.${zone_name}"
+    kubernetes.io/ingress.className: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
     traefik.ingress.kubernetes.io/router.priority: "10"
-
+  enabled: true
+  host: "pdns.${zone_name}"
+  port: 8081
+pdns:
+  args:
+  - --api=yes
+  - --api-key=$(PDNS_API_KEY)
+  - --webserver=yes
+  - --webserver-address=0.0.0.0
+  - --webserver-allow-from=192.168.0.0/16,127.0.0.1,::1
+  - --webserver-password=$(PDNS_API_KEY)
+  - --disable-syslog=yes
+  - --webserver-loglevel=detailed
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512M
+    requests:
+      cpu: 100m
+      memory: 256M
+  zones:
+  - ${zone_name}
+service:
+  annotations: null
+  dnstcp:
+    enabled: true
+    port: 53
+    protocol: TCP
+  dnsudp:
+    enabled: true
+    port: 53
+    protocol: UDP
+  type: ClusterIP
+  webserver:
+    enabled: true
+    port: 8081
+    protocol: TCP
 spec:
   ingressClassName: traefik
-  tls:
-  - hosts:
-    - "pdns.${zone_name}"
-    secretName: "pdns-tls.${zone_name}"
   rules:
   - host: "pdns.${zone_name}"
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: "pdns.${zone_name}"
             port:
               number: 8081
-
-apiPassword: &pdns_pass "${password}"
-pdns:
-  apiPassword: *pdns_pass # Replace with your admin password from env vars or secret manager
-  zones:
-  - ${zone_name}
-  env:
-  - name: api_pdns
-    value: "yes"
-  - name: api-key_pdns
-    value: *pdns_pass
-  - name: zone-metadata-cache-ttl
-    value: "60"
-  - name: gsqlite3-database_pdns
-    value: "/var/lib/powerdns/pdns.sqlite3"
-  - name: launch_pdns
-    value: "gsqlite3"
-  - name: webserver_pdns
-    value: "yes"
-  - name: webserver-address_pdns
-    value: "0.0.0.0"
-  - name: webserver-allow-from_pdns
-    value: "192.168.0.0/16,127.0.0.1,::1"
-  - name: webserver-password_pdns
-    value: *pdns_pass
-  resources:
-    requests:
-      cpu: "150m"
-      memory: "512M"
-    limits:
-      cpu: "200m"
-      memory: "1Gi"
+        path: /
+        pathType: Prefix

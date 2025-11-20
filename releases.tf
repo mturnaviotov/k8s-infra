@@ -37,9 +37,9 @@ locals {
     }
     "pdns" = {
       name      = "pdns"
-      chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.3/pdns-0.0.3.tgz"
+      chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.4/pdns-0.0.4.tgz"
       namespace = kubernetes_namespace.ns["dns"].metadata[0].name
-      version   = "0.0.3"
+      version   = "0.0.4"
       values = [templatefile("${path.module}/yaml/pdns.yaml", {
         zone_name = var.dns_private_zone_name
         password  = var.dns_server_password
