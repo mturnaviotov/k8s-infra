@@ -1,5 +1,5 @@
 resource "keycloak_openid_client" "argocd" {
-  realm_id                  = var.keycloak_realm
+  realm_id                  = keycloak_realm.cluster.id
   client_id                 = "argocd"
   name                      = "argocd"
   enabled                   = true
@@ -12,14 +12,14 @@ resource "keycloak_openid_client" "argocd" {
 }
 
 resource "keycloak_openid_client_scope" "argocd_groups" {
-  realm_id               = var.keycloak_realm
+  realm_id               = keycloak_realm.cluster.id
   name                   = "argocd_groups"
   include_in_token_scope = true
   gui_order              = 1
 }
 
 resource "keycloak_openid_group_membership_protocol_mapper" "argocd_groups_mapper" {
-  realm_id        = var.keycloak_realm
+  realm_id        = keycloak_realm.cluster.id
   client_scope_id = keycloak_openid_client_scope.argocd_groups.id
   name            = "argocd_groups"
   claim_name      = "groups"
@@ -28,7 +28,7 @@ resource "keycloak_openid_group_membership_protocol_mapper" "argocd_groups_mappe
 
 # configure argocd openid client default scopes
 resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
-  realm_id  = var.keycloak_realm
+  realm_id  = keycloak_realm.cluster.id
   client_id = keycloak_openid_client.argocd.id
   default_scopes = [
     "profile",
