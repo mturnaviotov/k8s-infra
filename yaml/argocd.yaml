@@ -44,9 +44,9 @@ configs:
     server.repo.server.strict.tls: 'false'
   rbac:
     policy.csv: |
-    # %{ for group in admin_groups ~}
-      g, ${group}, role:admin
-    # %{ endfor ~}
+    %{ for group in admin_groups ~}
+    g, ${group}, role:admin
+    %{ endfor ~}
     policy.default: ''
     policy.matchMode: glob
     scopes: '[groups]'
