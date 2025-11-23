@@ -6,14 +6,14 @@ locals {
 }
 ######################
 resource "keycloak_realm" "cluster" {
-  realm        = var.keycloak_realm
-  enabled      = true
-  display_name = "Cluster"
+  realm         = var.keycloak_realm
+  enabled       = true
+  account_theme = "keycloak.v3"
+  admin_theme   = "keycloak.v2"
+  email_theme   = "base"
+  login_theme   = "keycloak.v2"
 
-  access_code_lifespan = "1h"
-
-  ssl_required = "external"
-
+  access_code_lifespan        = "1h"
   default_signature_algorithm = "RS256"
 }
 
