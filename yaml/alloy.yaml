@@ -140,7 +140,7 @@ alloy:
       }
 
       // PowerDNS
-      prometheus.scrape "powerdns1" {
+      prometheus.scrape "powerdns" {
         targets = [{"__address__" = "pdns.dns.svc.cluster.local:8081","__metrics_path__" = "/metrics"}]
         http_headers = {"X-API-KEY" = [ "123123123" ]}
         basic_auth {
