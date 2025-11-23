@@ -95,3 +95,4 @@ output "argocd_initial_admin_password" {
   description = "Initial ArgoCD admin password (decoded)\n"
   value       = "\n=====\nArgoCD admin password:\nkubectl -n ${kubernetes_namespace.ns["argocd"].metadata[0].name} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode\n"
 }
+

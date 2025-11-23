@@ -4,6 +4,7 @@ global:
 server:
   ingress:
     enabled: false
+  insecure: true
 
 configs:
   cm:
@@ -16,10 +17,10 @@ configs:
       issuer: "${issuer}"
       clientID: "${clientID}"
       clientSecret: $oidc.keycloak.clientSecret
-      requestedScopes: ["openid", "profile", "email", "groups"]
+      requestedScopes: ["openid", "profile", "email"]
     url: https://argocd.zone.internal
 
-  cmd-params-cm:
+  params:
     server.insecure: 'true'
     applicationsetcontroller.enable.leader.election: 'false'
     applicationsetcontroller.log.format: json
@@ -43,9 +44,9 @@ configs:
     server.repo.server.strict.tls: 'false'
   rbac:
     policy.csv: |
-%{ for group in admin_groups ~}
+    # %{ for group in admin_groups ~}
       g, ${group}, role:admin
-%{ endfor ~}
+    # %{ endfor ~}
     policy.default: ''
     policy.matchMode: glob
     scopes: '[groups]'
