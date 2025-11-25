@@ -30,13 +30,14 @@ resource "keycloak_openid_group_membership_protocol_mapper" "argocd_groups_mappe
 }
 
 # configure argocd openid client default scopes
-resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
+resource "keycloak_openid_client_default_scopes" "argocd_default_scopes" {
   realm_id  = keycloak_realm.cluster.id
   client_id = keycloak_openid_client.argocd.id
   default_scopes = [
     "profile",
     "email",
     "roles",
+    "groups",
     "web-origins",
     keycloak_openid_client_scope.argocd_groups.name,
   ]
