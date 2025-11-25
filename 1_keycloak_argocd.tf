@@ -36,8 +36,6 @@ resource "keycloak_openid_client_default_scopes" "argocd_default_scopes" {
   default_scopes = [
     "profile",
     "email",
-    "roles",
-    "groups",
     "web-origins",
     keycloak_openid_client_scope.argocd_groups.name,
   ]
