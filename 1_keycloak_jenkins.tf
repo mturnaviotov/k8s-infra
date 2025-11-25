@@ -19,22 +19,26 @@ resource "keycloak_openid_client_scope" "jenkins_groups" {
 }
 
 resource "keycloak_openid_group_membership_protocol_mapper" "jenkins_groups_mapper" {
-  realm_id        = keycloak_realm.cluster.id
-  client_scope_id = keycloak_openid_client_scope.jenkins_groups.id
-  name            = "jenkins_groups"
-  claim_name      = "groups"
-  full_path       = false
+  realm_id            = keycloak_realm.cluster.id
+  client_scope_id     = keycloak_openid_client_scope.jenkins_groups.id
+  name                = "jenkins_groups"
+  claim_name          = "groups"
+  full_path           = false
+  add_to_access_token = true
+  add_to_id_token     = true
+  add_to_userinfo     = true
 }
 
-# configure argocd openid client default scopes
-# resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
-#   realm_id  = keycloak_realm.cluster.id
-#   client_id = keycloak_openid_client.jenkins.id
-#   default_scopes = [
-#     "profile",
-#     "email",
-#     "roles",
-#     "web-origins",
-#     keycloak_openid_client_scope.jenkins_groups.name,
-#   ]
-# }
+
+resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
+  realm_id  = keycloak_realm.cluster.id
+  client_id = keycloak_openid_client.jenkins.id
+  default_scopes = [
+    "profile",
+    "email",
+    "roles",
+    "groups",
+    "web-origins",
+    keycloak_openid_client_scope.jenkins_groups.name,
+  ]
+}

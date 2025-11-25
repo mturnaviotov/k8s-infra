@@ -19,11 +19,14 @@ resource "keycloak_openid_client_scope" "grafana_groups" {
 }
 
 resource "keycloak_openid_group_membership_protocol_mapper" "grafana_groups_mapper" {
-  realm_id        = keycloak_realm.cluster.id
-  client_scope_id = keycloak_openid_client_scope.grafana_groups.id
-  name            = "grafana_groups"
-  claim_name      = "groups"
-  full_path       = false
+  realm_id            = keycloak_realm.cluster.id
+  client_scope_id     = keycloak_openid_client_scope.grafana_groups.id
+  name                = "grafana_groups"
+  claim_name          = "groups"
+  full_path           = false
+  add_to_access_token = true
+  add_to_id_token     = true
+  add_to_userinfo     = true
 }
 
 resource "keycloak_role" "keycloak_grafana_role_admin" {
@@ -33,12 +36,15 @@ resource "keycloak_role" "keycloak_grafana_role_admin" {
   description = "Grafana admin role"
 }
 
-# resource "keycloak_group_roles" "keycloak_grafana_role_admin_map" {
-#   realm_id = keycloak_realm.cluster.id
-#   group_id = keycloak_group.groups["grafana-admin"].id
-
-#   role_ids = [
-#     keycloak_role.realm_role.id,
-#     keycloak_role.client_role.id,
-#   ]
-# }
+resource "keycloak_openid_client_default_scopes" "grafana_default_scopes" {
+  realm_id  = keycloak_realm.cluster.id
+  client_id = keycloak_openid_client.grafana.id
+  default_scopes = [
+    "profile",
+    "email",
+    "roles",
+    "groups",
+    "web-origins",
+    keycloak_openid_client_scope.grafana_groups.name,
+  ]
+}

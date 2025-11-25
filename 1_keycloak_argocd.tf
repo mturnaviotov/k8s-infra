@@ -19,11 +19,14 @@ resource "keycloak_openid_client_scope" "argocd_groups" {
 }
 
 resource "keycloak_openid_group_membership_protocol_mapper" "argocd_groups_mapper" {
-  realm_id        = keycloak_realm.cluster.id
-  client_scope_id = keycloak_openid_client_scope.argocd_groups.id
-  name            = "argocd_groups"
-  claim_name      = "groups"
-  full_path       = false
+  realm_id            = keycloak_realm.cluster.id
+  client_scope_id     = keycloak_openid_client_scope.argocd_groups.id
+  name                = "argocd_groups"
+  claim_name          = "groups"
+  full_path           = false
+  add_to_access_token = true
+  add_to_id_token     = true
+  add_to_userinfo     = true
 }
 
 # configure argocd openid client default scopes
