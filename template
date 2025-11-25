@@ -1,0 +1,12 @@
+      discovery.kubernetes "##s" {
+        role = "##"
+      }
+
+      loki.source.kubernetes "##s" {
+        targets    = discovery.kubernetes.##s.targets
+        forward_to = [loki.relabel.##s.receiver]
+      }
+
+      loki.relabel "##s" {
+        forward_to = [loki.write.loki.receiver]
+      }
