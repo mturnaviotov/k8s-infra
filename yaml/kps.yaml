@@ -26,8 +26,8 @@ grafana:
 
   grafana.ini:
     server:
-      root_url: https://grafana.zone.internal
-      domain: grafana.zone.internal
+      root_url: https://grafana.${zone_name}
+      domain: grafana.${zone_name}
 
     auth:
       disable_login_form: false
@@ -50,7 +50,12 @@ grafana:
       role_attribute_path: "contains(groups[*], '${group}' ) && 'Admin' || 'Viewer'"
 %{ endfor ~}
 #### GRAFANA.INI FINISH
-
+  additionalDataSources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: https://loki.${zone_name}
+    uid: loki
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:

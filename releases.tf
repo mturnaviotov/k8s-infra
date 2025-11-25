@@ -177,8 +177,8 @@ locals {
       version    = "79.5.0"
 
       values = [templatefile("${path.module}/yaml/kps.yaml", {
-        clientID = "grafana"
-        #oidc_client_secret = keycloak_openid_client.grafana.client_secret
+        clientID     = "grafana"
+        zone_name    = var.dns_private_zone_name
         issuer       = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${keycloak_realm.cluster.id}"
         admin_groups = ["grafana-admin"]
       })]
