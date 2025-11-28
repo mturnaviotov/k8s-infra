@@ -30,3 +30,8 @@ helm install -n mon loki grafana/loki -f loki.yaml
 helm install -n mon  grafana-operator oci://ghcr.io/grafana/helm-charts/grafana-operator --version v5.20.0
 helm install -n mon kps prometheus-community/kube-prometheus-stack --version 79.5.0
 '''
+
+For get service monitor discovery release we need to find a key serviceMonitorSelector
+'''
+kubectl -n mon get prometheuses.monitoring.coreos.com -o yaml | less > serviceMonitorSelector
+'''
