@@ -23,8 +23,20 @@ You need to firstly install by renaming all non used in this terraform apply cyc
 
 Please carefully read TF files, they contains pre installation steps, like certificates generation for cert-manager
 
-0. Traefik, Dashboard, cert-manager, dns-external and PowerDNS
-1. KeyCloak
+## How to install
+
+- copy terraform.tfvars.default to terraform.tfvars
+- edit it properly
+- check headers of yaml/keycloak.yaml, you need to install it manually before terraform will succesfully run
+- sign in to keycloak, go to clients -> admin-cli, enable client authentication, go to credentials tab and copy client secret to terraform.vars
+
+## Components
+
+0. Networking basics:
+  * Traefik, Dashboard
+  * dns-external and PowerDNS
+  * cert-manager
+1. KeyCloak, Vault
 2. Jenkins, ArgoCD
 3. ArgoCD Application
 4. Ingresses
