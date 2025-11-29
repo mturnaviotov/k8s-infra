@@ -3,7 +3,7 @@ variable "namespaces" {
   description = "namespaces"
   type        = list(string)
   default = ["argocd", "auth", "cert-manager", "dns", "ingress",
-  "jenkins", "kubernetes-dashboard", "mon"]
+  "jenkins", "kubernetes-dashboard", "mon", "vault"]
 }
 
 resource "kubernetes_namespace" "ns" {
