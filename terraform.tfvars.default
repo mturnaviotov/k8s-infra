@@ -1,7 +1,19 @@
 # fulfill this file with your variables before running terraform
 # and do not commit it to version control
+
 # you can copy this file to terraform.tfvars and edit it there
 # here wi will create all clients for our cluster
+
+#################################
+# Vault params
+#################################
+
+vault_admin_token    = root12345
+vault_server_address = "http://vault.vault.svc.cluster.local:8200"
+
+#################################
+# KeyCloak params
+#################################
 
 keycloak_admin_url           = "http://keycloak.(namespace).svc.cluster.local:8080"
 

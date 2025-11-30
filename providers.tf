@@ -34,6 +34,10 @@ terraform {
       source  = "keycloak/keycloak"
       version = "5.5.0"
     }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "5.5.0"
+    }
   }
 }
 
@@ -55,4 +59,10 @@ provider "keycloak" {
   realm         = var.keycloak_admin_realm
   username      = var.keycloak_admin_username
   password      = var.keycloak_admin_password
+}
+
+provider "vault" {
+  # Configuration options
+  address = var.vault_server_address
+  token   = var.vault_admin_token
 }
