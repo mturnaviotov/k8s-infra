@@ -29,7 +29,7 @@ resource "vault_kubernetes_auth_backend_role" "myapp" {
 resource "vault_policy" "cluster" {
   name = "cluster"
 
-  # ! Allow read access to the secret at secret/data/cluster/py/db,
+  # ! Allow read access to the secret at secret/cluster/py/db,
   # ! /data is required for KV v2 for reading secrets from injectors
   policy = <<EOT
     path "secret/data/cluster/py/db" {
@@ -42,8 +42,10 @@ resource "vault_generic_secret" "myapp" {
   path      = "secret/cluster/py/db"
   data_json = <<EOT
     {
-        "username":   "${var.db_username}",
-        "password":   "${var.db_password}"
+      "POSTGRES_DB":        "djangodb",
+      "POSTGRES_HOST":      "localhost",
+      "POSTGRES_USER":      "${var.db_username}",
+      "POSTGRES_PASSWORD":  "${var.db_password}"
     }
     EOT
 }
