@@ -3,13 +3,15 @@ image:
   pullPolicy: IfNotPresent
   repository: powerdns/pdns-auth-master
 ingress:
-  ClusterIP: 192.168.194.130
+  type: LoadBalancer
+  IP: 192.168.194.250
   annotations:
     cert-manager.io/cluster-issuer: local-ca
     external-dns.alpha.kubernetes.io/hostname: "pdns.${zone_name}"
     kubernetes.io/ingress.className: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.priority: "10"
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    #traefik.ingress.kubernetes.io/router.priority: "10"
   enabled: true
   host: "pdns.${zone_name}"
   port: 8081

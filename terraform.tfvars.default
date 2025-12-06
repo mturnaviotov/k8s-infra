@@ -5,6 +5,12 @@
 # here wi will create all clients for our cluster
 
 #################################
+# Networking
+#################################
+
+metallb_ip_ranges       = ["192.168.194.200-192.168.194.250"]
+
+#################################
 # Vault params
 #################################
 
@@ -33,4 +39,3 @@ keycloak_admin_password      = "admin-password"
 
 # our work realm for cluster applications
 keycloak_realm               = "cluster"
-

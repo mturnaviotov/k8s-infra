@@ -33,7 +33,6 @@ locals {
         dns_private_zone_name = var.dns_private_zone_name
         })
       ]
-
     }
     "pdns" = {
       name      = "pdns"
@@ -44,6 +43,16 @@ locals {
         zone_name = var.dns_private_zone_name
         password  = var.dns_server_password
       })]
+    }
+
+    ####
+
+    "metallb" = {
+      name       = "metallb"
+      repository = "https://metallb.github.io/metallb"
+      chart      = "metallb"
+      namespace  = kubernetes_namespace.ns["metallb-system"].metadata[0].name
+      version    = "0.15.3"
     }
 
     ####

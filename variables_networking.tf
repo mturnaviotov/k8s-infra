@@ -35,3 +35,8 @@ variable "dns_orb_zone" {
   default = "k8s.orb.local"
   type    = string
 }
+
+variable "metallb_ip_ranges" {
+  default = ["192.168.0.200-192.168.0.250"]
+  type    = list(string)
+}

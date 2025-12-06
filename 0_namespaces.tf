@@ -1,9 +1,9 @@
-# terraform import 'kubernetes_namespace.ns["ingress"]' jenkins
+# terraform import 'kubernetes_namespace.ns["jenkins"]' jenkins
 variable "namespaces" {
   description = "namespaces"
   type        = list(string)
   default = ["argocd", "auth", "cert-manager", "dns", "ingress",
-  "jenkins", "kubernetes-dashboard", "mon", "vault"]
+  "jenkins", "kubernetes-dashboard", "mon", "metallb-system", "vault"]
 }
 
 resource "kubernetes_namespace" "ns" {
