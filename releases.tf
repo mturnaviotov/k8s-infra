@@ -127,7 +127,7 @@ locals {
 
       values = [templatefile("${path.module}/yaml/jenkins.yaml", {
         admin_password       = var.jenkins_admin_password
-        admin_email          = "${var.name_jenkins}@${keycloak_realm.cluster.id}"
+        admin_email          = "${var.name_jenkins}@${var.keycloak_realm}"
         dockerhub_login      = var.jenkins_dockerhub_login
         dockerhub_password   = var.jenkins_dockerhub_password
         oidc_secret          = keycloak_openid_client.jenkins.client_secret
@@ -135,7 +135,7 @@ locals {
         jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace.ns["jenkins"].metadata[0].name}.${var.dns_cluster_zone}"
         jenkins_url          = "${var.name_jenkins}.${var.dns_private_zone_name}"
         kubernetes_namespace = kubernetes_namespace.ns["jenkins"].metadata[0].name
-        oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${keycloak_realm.cluster.id}"
+        oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
         oidc_clientid        = var.name_jenkins
         dns_zone             = var.dns_cluster_zone
         github_account       = var.github_account
@@ -156,8 +156,9 @@ locals {
       values = [templatefile("${path.module}/yaml/argocd.yaml", {
         clientID           = "argocd"
         oidc_client_secret = keycloak_openid_client.argocd.client_secret
-        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${keycloak_realm.cluster.id}"
+        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
         admin_groups       = ["argocd-admin"]
+        argo_url           = "argocd.${var.dns_private_zone_name}"
         })
       ]
     }
@@ -203,7 +204,7 @@ locals {
       values = [templatefile("${path.module}/yaml/kps.yaml", {
         clientID     = "grafana"
         zone_name    = var.dns_private_zone_name
-        issuer       = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${keycloak_realm.cluster.id}"
+        issuer       = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
         admin_groups = ["grafana-admin"]
       })]
     }

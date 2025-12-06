@@ -10,6 +10,8 @@ metadata:
   name: keycloak
   labels:
     app: keycloak
+  annotations:
+    metallb.io/address-pool: ip-pool
 spec:
   ports:
   - protocol: TCP
@@ -18,7 +20,7 @@ spec:
     name: http
   selector:
     app: keycloak
-  type: ClusterIP
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
@@ -125,11 +127,11 @@ spec:
           failureThreshold: 3
         resources:
           limits:
-            cpu: 1200m
-            memory: 1700Mi
+            cpu: 700m
+            memory: 1000Mi
           requests:
-            cpu: 1000m
-            memory: 1500Mi
+            cpu: 500m
+            memory: 500Mi
 ---
 # This is deployment of PostgreSQL with an ephemeral storage for testing: Once the Pod stops, the data is lost.
 # For a production setup, replace it with a database setup that persists your data.

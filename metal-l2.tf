@@ -13,6 +13,7 @@ resource "kubernetes_manifest" "metallb_l2_advertisement" {
     "spec" = {
       "ipAddressPools" = [
         kubernetes_manifest.metallb_ip_pool.manifest.metadata["name"],
+        kubernetes_manifest.metallb_dns_pool.manifest.metadata["name"],
       ]
     }
   }

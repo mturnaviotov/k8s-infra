@@ -17,6 +17,8 @@ server:
       external-dns.alpha.kubernetes.io/hostname: ${server}
       kubernetes.io/ingress.class: traefik
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      metallb.io/address-pool: ip-pool
+
     ingressClassName: traefik
     rules:
     - host: ${server}

@@ -26,7 +26,7 @@ variable "tls_secret_name" {
 }
 
 variable "ingress_class" {
-  description = "Ingress class (traefik/nginx)"
+  description = "Ingress class (traefik)"
   type        = string
   default     = "traefik"
 }

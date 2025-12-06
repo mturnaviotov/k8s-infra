@@ -4,14 +4,15 @@ image:
   repository: powerdns/pdns-auth-master
 ingress:
   type: LoadBalancer
-  IP: 192.168.194.250
+  IP: 192.168.194.10
   annotations:
     cert-manager.io/cluster-issuer: local-ca
     external-dns.alpha.kubernetes.io/hostname: "pdns.${zone_name}"
     kubernetes.io/ingress.className: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    #traefik.ingress.kubernetes.io/router.priority: "10"
+    metallb.io/address-pool: dns-pool
+    metallb.io/loadBalancerIPs: "192.168.194.10"
   enabled: true
   host: "pdns.${zone_name}"
   port: 8081

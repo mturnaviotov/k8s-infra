@@ -2,6 +2,14 @@
 # helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
 # ./yaml/alloy-tune.yaml
 ###
+service:
+  # -- Creates a Service for the controller's pods.
+  enabled: true
+  # -- Service type
+  type: LoadBalancer
+  annotations:
+    metallb.io/address-pool: ip-pool
+
 alloy:
   mounts:
     varlog: true

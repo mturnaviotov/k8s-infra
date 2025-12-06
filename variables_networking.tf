@@ -36,7 +36,12 @@ variable "dns_orb_zone" {
   type    = string
 }
 
+variable "metallb_dns_range" {
+  default = ["192.168.0.10-192.168.0.11"]
+  type    = list(string)
+}
+
 variable "metallb_ip_ranges" {
-  default = ["192.168.0.200-192.168.0.250"]
+  default = ["192.168.0.12-192.168.0.50"]
   type    = list(string)
 }

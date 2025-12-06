@@ -2,6 +2,8 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: local-ca
     external-dns.alpha.kubernetes.io/hostname: traefik.${dns_zone}
+    metallb.io/address-pool: ip-pool
+
 global:
   checkNewVersion: true
   sendAnonymousUsage: true

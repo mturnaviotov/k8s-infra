@@ -2,10 +2,12 @@ controller:
   admin:
     password: "${admin_password}"
 
-  serviceType: "ClusterIP"
+  serviceType: LoadBalancer
+  annotations:
+    metallb.io/address-pool: ip-pool
 
   installPlugins:
-  - kubernetes:4384.v1b_6367f393d9
+  - kubernetes
   - workflow-aggregator:608.v67378e9d3db_1
   - git:5.8.0
   - configuration-as-code:2006.v001a_2ca_6b_574
