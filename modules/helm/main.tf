@@ -7,4 +7,7 @@ resource "helm_release" "app" {
   create_namespace = false
   values           = var.values
   set              = var.set
+  take_ownership   = true
+
+  disable_openapi_validation = true
 }
