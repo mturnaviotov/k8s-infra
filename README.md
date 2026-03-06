@@ -90,10 +90,11 @@ Please carefully read TF files, they contains pre installation steps, like certi
   ```
 
 - Update /etc/resolver/zone.internal for proper PowerDNS Ingress/MetalLB IP and update MacOS
-  resolver zone
+  resolver zone (some operations may be prohibited, so run it via sudo manually)
 
   ```
   dnsPod=`kubectl get svc --all-namespaces | grep pdns | awk '{print $4}'`
+  sudo mkdir /etc/resolver/
   sudo echo -e "nameserver $dnsPod\nport 53" > /etc/resolver/zone.internal
   sudo killall -HUP mDNSResponder
   ```
@@ -105,3 +106,5 @@ Please carefully read TF files, they contains pre installation steps, like certi
 ## Notices
 
 1. ArgoCD Cluster will be in UNKNOWN state until first deploy
+2. VS Code after updating may fail to connect to your K8s, check Settings - Privacy - Local networking - VS code -> Allow
+3. After MacOS updates may clear your private dns resolvers, if someting goes wrong - check it
