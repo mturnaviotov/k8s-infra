@@ -1,11 +1,6 @@
 locals {
 
   ingresses = {
-    "board" = {
-      namespace    = kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name
-      service_name = "kubernetes-dashboard-web"
-      service_port = 8000
-    }
     "argocd" = {
       namespace    = kubernetes_namespace.ns["argocd"].metadata[0].name
       service_name = "argocd-server"
