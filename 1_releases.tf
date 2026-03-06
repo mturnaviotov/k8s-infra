@@ -75,31 +75,6 @@ locals {
       ]
     }
 
-    ####
-
-    "kubernetes-dashboard" = {
-      name       = "kubernetes-dashboard"
-      namespace  = kubernetes_namespace.ns["kubernetes-dashboard"].metadata[0].name
-      repository = "https://kubernetes.github.io/dashboard/"
-      chart      = "kubernetes-dashboard"
-      version    = "7.13.0"
-
-      values = [
-        yamlencode({
-          protocolHttp = true
-          service = {
-            type = "ClusterIP"
-          }
-          ingress = {
-            enabled = false
-          }
-          metricsScraper = {
-            enabled = true
-          }
-        })
-      ]
-
-    }
     #### NETWORKING BASICS FINISH ####
 
     "vault" = {
