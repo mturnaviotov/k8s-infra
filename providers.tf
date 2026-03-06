@@ -13,7 +13,7 @@ variable "kubeconfig_path" {
 variable "kubeconfig_context" {
   description = "Kubeconfig context to use."
   type        = string
-  default     = "orbstack"
+  default     = "kind-basic"
 }
 
 #########################
