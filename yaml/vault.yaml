@@ -4,24 +4,28 @@
 server:
   dev:
     enabled: true
-    devRootToken: ${admin_token}
+    devRootToken: admin12345
+    # $ {admin_token}
 
   ingress:
     enabled: true
     activeService: true
     hosts:
-    - host: ${server}
+    - host: vault.zone.internal
+    # $ {server}
       paths: []
     annotations:
       cert-manager.io/cluster-issuer: local-ca
-      external-dns.alpha.kubernetes.io/hostname: ${server}
+      external-dns.alpha.kubernetes.io/hostname: vault.zone.internal
+      # $ {server}
       kubernetes.io/ingress.class: traefik
       traefik.ingress.kubernetes.io/router.entrypoints: websecure
       metallb.io/address-pool: ip-pool
 
     ingressClassName: traefik
     rules:
-    - host: ${server}
+    - host: vault.zone.internal
+      # $ {server}
       http:
         paths:
         - backend:
@@ -33,7 +37,8 @@ server:
           pathType: Prefix
     tls:
     - hosts:
-      - ${server}
+      - vault.zone.internal
+      # $ {server}
       secretName: vault-tls
 
 config: telemetry { prometheus_retention_time = "30s" disable_hostname = false }
