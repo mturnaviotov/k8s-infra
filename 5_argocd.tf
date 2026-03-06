@@ -4,6 +4,11 @@
 # Variables
 #########################
 
+variable "argocd_cluster_name" {
+  default = "orbstack"
+  type    = string
+}
+
 variable "argocd_cluster_url" {
   description = "ArgoCD cluster URL"
   type        = string
@@ -64,9 +69,9 @@ data "kubernetes_config_map" "kube_root_ca" {
 # ArgoCD Cluster Secret
 #########################
 
-resource "kubernetes_secret" "argocd_cluster_orbstack" {
+resource "kubernetes_secret" "argocd_cluster_default" {
   metadata {
-    name      = "orbstack"
+    name      = var.argocd_cluster_name
     namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
     labels = {
       "argocd.argoproj.io/secret-type" = "cluster"
@@ -74,7 +79,7 @@ resource "kubernetes_secret" "argocd_cluster_orbstack" {
   }
 
   data = {
-    name   = ("orbstack")
+    name   = var.argocd_cluster_name
     server = var.argocd_cluster_url
     config = jsonencode({
       bearerToken = kubernetes_secret_v1.argocd_access_token.data["token"]
