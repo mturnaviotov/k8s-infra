@@ -22,7 +22,7 @@ pdns:
   - --api-key=$(PDNS_API_KEY)
   - --webserver=yes
   - --webserver-address=0.0.0.0
-  - --webserver-allow-from=192.168.0.0/16,127.0.0.1,::1
+  - --webserver-allow-from=172.0.0.0/8,10.0.0.0/8,192.168.0.0/16,127.0.0.1,::1
   - --webserver-password=$(PDNS_API_KEY)
   - --disable-syslog=yes
   - --webserver-loglevel=detailed
