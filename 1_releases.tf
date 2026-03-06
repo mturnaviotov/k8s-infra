@@ -77,20 +77,21 @@ locals {
 
     #### NETWORKING BASICS FINISH ####
 
-    "vault" = {
-      name       = "vault"
-      repository = "https://helm.releases.hashicorp.com"
-      chart      = "vault"
-      namespace  = kubernetes_namespace.ns["vault"].metadata[0].name
-      version    = "0.31.0"
+    # Vault disabled due to manual installation and Terraform import complexity
+    # "vault" = {
+    #   name       = "vault"
+    #   repository = "https://helm.releases.hashicorp.com"
+    #   chart      = "vault"
+    #   namespace  = kubernetes_namespace.ns["vault"].metadata[0].name
+    #   version    = "0.32.0"
 
-      values = [templatefile("${path.module}/yaml/vault.yaml", {
-        admin_token          = var.vault_admin_token
-        server               = "vault.${var.dns_private_zone_name}"
-        kubernetes_namespace = kubernetes_namespace.ns["vault"].metadata[0].name
-        })
-      ]
-    }
+    #   values = [templatefile("${path.module}/yaml/vault.yaml", {
+    #     admin_token          = var.vault_admin_token
+    #     server               = "vault.${var.dns_private_zone_name}"
+    #     kubernetes_namespace = kubernetes_namespace.ns["vault"].metadata[0].name
+    #     })
+    #   ]
+    # }
 
     #### CI/CD ####
     "jenkins" = {
