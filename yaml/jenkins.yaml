@@ -9,9 +9,9 @@ controller:
   installPlugins:
   - kubernetes
   - workflow-aggregator:608.v67378e9d3db_1
-  - git:5.8.0
-  - configuration-as-code:2006.v001a_2ca_6b_574
-  - oic-auth:4.609.v9de140f63d01
+  - git:5.10.0
+  - configuration-as-code:2037.v8e5349845172
+  - oic-auth:4.626.ve5a_d9f26c051
   - role-strategy
 
   JCasC:
@@ -194,7 +194,7 @@ controller:
           buildDiscarders:
             configuredBuildDiscarders:
             - "jobBuildDiscarder"
-          builtInNode: {}
+          # builtInNode: {} 5.8.3 and upper fails
           casCGlobalConfig: {}
           computerRetentionCheckInterval: {}
           defaultDisplayUrlProvider: {}

@@ -98,7 +98,7 @@ locals {
       repository = "https://charts.jenkins.io"
       chart      = var.name_jenkins
       namespace  = kubernetes_namespace.ns["jenkins"].metadata[0].name
-      version    = "5.8.110"
+      version    = "5.9.3"
 
       values = [templatefile("${path.module}/yaml/jenkins.yaml", {
         admin_password       = var.jenkins_admin_password
