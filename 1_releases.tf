@@ -127,7 +127,7 @@ locals {
       repository = "https://argoproj.github.io/argo-helm"
       chart      = "argo-cd"
       namespace  = kubernetes_namespace.ns["argocd"].metadata[0].name
-      version    = "9.1.3"
+      version    = "9.4.12"
 
       values = [templatefile("${path.module}/yaml/argocd.yaml", {
         clientID           = "argocd"

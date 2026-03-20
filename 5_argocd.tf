@@ -5,14 +5,14 @@
 #########################
 
 variable "argocd_cluster_name" {
-  default = "orbstack"
+  default = "in-cluster"
   type    = string
 }
 
 variable "argocd_cluster_url" {
   description = "ArgoCD cluster URL"
   type        = string
-  default     = "https://host.docker.internal:26443"
+  default     = "https://kubernetes.default.svc"
 }
 
 #########################
