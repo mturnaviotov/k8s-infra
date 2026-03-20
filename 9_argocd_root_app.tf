@@ -15,7 +15,7 @@ resource "kubernetes_manifest" "argocd_root_app" {
       project = "default"
       source = {
         repoURL        = "https://github.com/mturnaviotov/k8s-argo.git"
-        targetRevision = "HEAD"
+        targetRevision = "main"
         path           = "root/"
       }
       destination = {
