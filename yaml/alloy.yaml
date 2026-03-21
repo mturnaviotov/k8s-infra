@@ -2,6 +2,14 @@
 # helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
 # ./yaml/alloy-tune.yaml
 ###
+controller:
+  # -- Type of controller to use for deploying Grafana Alloy in the cluster.
+  # Must be one of 'daemonset', 'deployment', or 'statefulset'.
+  type: "statefulset"
+
+  # -- Number of pods to deploy. Ignored when controller.type is 'daemonset'.
+  replicas: 1
+
 service:
   # -- Creates a Service for the controller's pods.
   enabled: true

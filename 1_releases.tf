@@ -148,7 +148,7 @@ locals {
       repository = "https://grafana.github.io/helm-charts"
       chart      = "alloy"
       namespace  = kubernetes_namespace.ns["mon"].metadata[0].name
-      version    = "1.4.0"
+      version    = "1.6.2"
 
       values = [templatefile("${path.module}/yaml/alloy.yaml", {
         loki_url = "https://loki.${var.dns_private_zone_name}"
