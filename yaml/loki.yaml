@@ -101,7 +101,7 @@ loki:
     readOnlyRootFilesystem: true
     capabilities:
       drop:
-      - ALL
+        - ALL
     allowPrivilegeEscalation: false
   # -- Should enableServiceLinks be enabled. Default to enable
   enableServiceLinks: true
@@ -428,13 +428,13 @@ loki:
   useTestSchema: true
   testSchemaConfig:
     configs:
-    - from: 2024-04-01
-      store: tsdb
-      object_store: '{{ include "loki.testSchemaObjectStore" . }}'
-      schema: v13
-      index:
-        prefix: index_
-        period: 24h
+      - from: 2024-04-01
+        store: tsdb
+        object_store: '{{ include "loki.testSchemaObjectStore" . }}'
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
   ## A separate loki ruler storage configuration can be provided via rulerStorage.storage section:
   ##  rulerConfig:
   ##    storage:
@@ -623,7 +623,7 @@ lokiCanary:
     rollingUpdate:
       maxUnavailable: 1
   # -- Replicas for `loki-canary` when using a Deployment
-  replicas: 0
+  replicas: 1
 ######################################################################################################################
 #
 # Service Accounts and Kubernetes RBAC
@@ -733,7 +733,7 @@ memberlist:
 # -- Configuration for the `admin-api` target
 adminApi:
   # -- Define the amount of instances
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -766,7 +766,7 @@ adminApi:
     readOnlyRootFilesystem: true
     capabilities:
       drop:
-      - ALL
+        - ALL
     allowPrivilegeEscalation: false
   # -- Update strategy
   strategy:
@@ -824,7 +824,7 @@ gateway:
   # -- Specifies whether the gateway should be enabled
   enabled: false
   # -- Number of replicas for the gateway
-  replicas: 0
+  replicas: 1
   # -- Default container port
   containerPort: 8080
   # -- Enable logging of 2xx and 3xx HTTP requests
@@ -900,7 +900,7 @@ gateway:
     readOnlyRootFilesystem: true
     capabilities:
       drop:
-      - ALL
+        - ALL
     allowPrivilegeEscalation: false
   # -- Use the host's user namespace in the gateway
   hostUsers: nil
@@ -916,12 +916,12 @@ gateway:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: gateway
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: gateway
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- DNS config for gateway pods
   dnsConfig: {}
   # -- Node selector for gateway pods
@@ -959,16 +959,16 @@ gateway:
     labels: {}
     # -- Hosts configuration for the gateway ingress, passed through the `tpl` function to allow templating
     hosts:
-    - host: gateway.loki.example.com
-      paths:
-      - path: /
-        # -- pathType (e.g. ImplementationSpecific, Prefix, .. etc.) might also be required by some Ingress Controllers
-        # pathType: Prefix
-        # -- TLS configuration for the gateway ingress. Hosts passed through the `tpl` function to allow templating
+      - host: gateway.loki.example.com
+        paths:
+          - path: /
+            # -- pathType (e.g. ImplementationSpecific, Prefix, .. etc.) might also be required by some Ingress Controllers
+            # pathType: Prefix
+            # -- TLS configuration for the gateway ingress. Hosts passed through the `tpl` function to allow templating
     tls:
-    - secretName: loki-gateway-tls
-      hosts:
-      - gateway.loki.example.com
+      - secretName: loki-gateway-tls
+        hosts:
+          - gateway.loki.example.com
   # Basic auth configuration
   basicAuth:
     # -- Enables basic authentication for the gateway
@@ -1076,56 +1076,56 @@ ingress:
     # If deployment mode is SimpleScalable, the requests are forwarded to write k8s service: `{{"loki.writeFullname"}}`.
     # If deployment mode is SingleBinary, the requests are forwarded to the central/single k8s service: `{{"loki.singleBinaryFullname"}}`
     distributor:
-    - /api/prom/push
-    - /loki/api/v1/push
-    - /otlp/v1/logs
-    - /ui
+      - /api/prom/push
+      - /loki/api/v1/push
+      - /otlp/v1/logs
+      - /ui
     # -- Paths that are exposed by Loki Query Frontend.
     # If deployment mode is Distributed, the requests are forwarded to the service: `{{"loki.queryFrontendFullname"}}`.
     # If deployment mode is SimpleScalable, the requests are forwarded to write k8s service: `{{"loki.readFullname"}}`.
     # If deployment mode is SingleBinary, the requests are forwarded to the central/single k8s service: `{{"loki.singleBinaryFullname"}}`
     queryFrontend:
-    - /api/prom/query
-    # this path covers labels and labelValues endpoints
-    - /api/prom/label
-    - /api/prom/series
-    - /api/prom/tail
-    - /loki/api/v1/query
-    - /loki/api/v1/query_range
-    - /loki/api/v1/tail
-    # this path covers labels and labelValues endpoints
-    - /loki/api/v1/label
-    - /loki/api/v1/labels
-    - /loki/api/v1/series
-    - /loki/api/v1/index/stats
-    - /loki/api/v1/index/volume
-    - /loki/api/v1/index/volume_range
-    - /loki/api/v1/format_query
-    - /loki/api/v1/detected_field
-    - /loki/api/v1/detected_fields
-    - /loki/api/v1/detected_labels
-    - /loki/api/v1/patterns
+      - /api/prom/query
+      # this path covers labels and labelValues endpoints
+      - /api/prom/label
+      - /api/prom/series
+      - /api/prom/tail
+      - /loki/api/v1/query
+      - /loki/api/v1/query_range
+      - /loki/api/v1/tail
+      # this path covers labels and labelValues endpoints
+      - /loki/api/v1/label
+      - /loki/api/v1/labels
+      - /loki/api/v1/series
+      - /loki/api/v1/index/stats
+      - /loki/api/v1/index/volume
+      - /loki/api/v1/index/volume_range
+      - /loki/api/v1/format_query
+      - /loki/api/v1/detected_field
+      - /loki/api/v1/detected_fields
+      - /loki/api/v1/detected_labels
+      - /loki/api/v1/patterns
     # -- Paths that are exposed by Loki Ruler.
     # If deployment mode is Distributed, the requests are forwarded to the service: `{{"loki.rulerFullname"}}`.
     # If deployment mode is SimpleScalable, the requests are forwarded to k8s service: `{{"loki.backendFullname"}}`.
     # If deployment mode is SimpleScalable but `read.legacyReadTarget` is `true`, the requests are forwarded to k8s service: `{{"loki.readFullname"}}`.
     # If deployment mode is SingleBinary, the requests are forwarded to the central/single k8s service: `{{"loki.singleBinaryFullname"}}`
     ruler:
-    - /api/prom/rules
-    - /api/prom/api/v1/rules
-    - /api/prom/api/v1/alerts
-    - /loki/api/v1/rules
-    - /prometheus/api/v1/rules
-    - /prometheus/api/v1/alerts
+      - /api/prom/rules
+      - /api/prom/api/v1/rules
+      - /api/prom/api/v1/alerts
+      - /loki/api/v1/rules
+      - /prometheus/api/v1/rules
+      - /prometheus/api/v1/alerts
     # -- Paths that are exposed by Loki Compactor.
     # If deployment mode is Distributed, the requests are forwarded to the service: `{{"loki.compactorFullname"}}`.
     # If deployment mode is SimpleScalable, the requests are forwarded to k8s service: `{{"loki.backendFullname"}}`.
     # If deployment mode is SingleBinary, the requests are forwarded to the central/single k8s service: `{{"loki.singleBinaryFullname"}}`
     compactor:
-    - /loki/api/v1/delete
+      - /loki/api/v1/delete
   # -- Hosts configuration for the ingress, passed through the `tpl` function to allow templating
   hosts:
-  - loki.example.com
+    - loki.example.com
   # -- TLS configuration for the ingress. Hosts passed through the `tpl` function to allow templating
   tls: []
 #    - hosts:
@@ -1207,12 +1207,12 @@ singleBinary:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: single-binary
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: single-binary
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Topology Spread Constraints for single binary pods
   # The value will be passed through tpl.
   topologySpreadConstraints: []
@@ -1237,9 +1237,9 @@ singleBinary:
     enabled: true
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Size of persistent disk
-    size: 1Gi
+    size: 512Mi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.
@@ -1280,14 +1280,14 @@ write:
       # -- see https://github.com/grafana/loki/blob/main/docs/sources/operations/storage/wal.md#how-to-scale-updown for scaledown details
       scaleUp:
         policies:
-        - type: Pods
-          value: 1
-          periodSeconds: 900
+          - type: Pods
+            value: 1
+            periodSeconds: 900
       scaleDown:
         policies:
-        - type: Pods
-          value: 1
-          periodSeconds: 1800
+          - type: Pods
+            value: 1
+            periodSeconds: 1800
         stabilizationWindowSeconds: 3600
   image:
     # -- The Docker registry for the write image. Overrides `loki.image.registry`
@@ -1352,12 +1352,12 @@ write:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: write
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: write
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- DNS config for write pods
   dnsConfig: {}
   # -- Node selector for write pods
@@ -1374,7 +1374,7 @@ write:
     volumeClaimsEnabled: true
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Parameters used for the `data` volume when volumeClaimEnabled if false
     dataVolumeParameters:
       emptyDir: {}
@@ -1483,12 +1483,12 @@ read:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: read
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: read
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- DNS config for read pods
   dnsConfig: {}
   # -- Node selector for read pods
@@ -1506,7 +1506,7 @@ read:
     enableStatefulSetAutoDeletePVC: true
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Size of persistent disk
     size: 10Gi
     # -- Storage class to be used.
@@ -1604,12 +1604,12 @@ backend:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: backend
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: backend
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- DNS config for backend pods
   dnsConfig: {}
   # -- Node selector for backend pods
@@ -1626,7 +1626,7 @@ backend:
     volumeClaimsEnabled: true
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Parameters used for the `data` volume when volumeClaimEnabled if false
     dataVolumeParameters:
       emptyDir: {}
@@ -1743,26 +1743,26 @@ ingester:
   # @default -- Defaults to allow skew no more than 1 node
   # The value will be passed through tpl.
   topologySpreadConstraints:
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/component: ingester
-        app.kubernetes.io/name: '{{ include "loki.name" . }}'
-        app.kubernetes.io/instance: '{{ .Release.Name }}'
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: ingester
+          app.kubernetes.io/name: '{{ include "loki.name" . }}'
+          app.kubernetes.io/instance: "{{ .Release.Name }}"
   # -- Affinity for ingester pods. Ignored if zoneAwareReplication is enabled.
   # @default -- Hard node anti-affinity
   # The value will be passed through tpl.
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: ingester
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: ingester
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: 1
   # -- Node selector for ingester pods
@@ -1788,20 +1788,20 @@ ingester:
     # -- List of the ingester PVCs
     # @notationType -- list
     claims:
-    - name: data
-      # -- Set access modes on the PersistentVolumeClaim
-      accessModes:
-      - ReadWriteOnce
-      size: 10Gi
-      #   -- Storage class to be used.
-      #   If defined, storageClassName: <storageClass>.
-      #   If set to "-", storageClassName: "", which disables dynamic provisioning.
-      #   If empty or set to null, no storageClassName spec is
-      #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
-      storageClass: null
-      # - name: wal
-      #   size: 150Gi
-      # -- Enable StatefulSetAutoDeletePVC feature
+      - name: data
+        # -- Set access modes on the PersistentVolumeClaim
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
+        # - name: wal
+        #   size: 150Gi
+        # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     whenDeleted: Retain
     whenScaled: Retain
@@ -1949,12 +1949,12 @@ distributor:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: distributor
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: distributor
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Max Surge for distributor pods
@@ -2053,26 +2053,26 @@ querier:
   # @default -- Defaults to allow skew no more then 1 node
   # The value will be passed through tpl.
   topologySpreadConstraints:
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/component: querier
-        app.kubernetes.io/name: '{{ include "loki.name" . }}'
-        app.kubernetes.io/instance: '{{ .Release.Name }}'
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: querier
+          app.kubernetes.io/name: '{{ include "loki.name" . }}'
+          app.kubernetes.io/instance: "{{ .Release.Name }}"
   # -- Affinity for querier pods.
   # @default -- Hard node anti-affinity
   # The value will be passed through tpl.
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: querier
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: querier
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Max Surge for querier pods
@@ -2170,12 +2170,12 @@ queryFrontend:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: query-frontend
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: query-frontend
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Node selector for query-frontend pods
@@ -2248,12 +2248,12 @@ queryScheduler:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: query-scheduler
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: query-scheduler
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: 1
   # -- Node selector for query-scheduler pods
@@ -2326,12 +2326,12 @@ indexGateway:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: index-gateway
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: index-gateway
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Node selector for index-gateway pods
@@ -2346,7 +2346,7 @@ indexGateway:
     enabled: false
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Use emptyDir with ramdisk for storage. **Please note that all data in indexGateway will be lost on pod restart**
     inMemory: false
     # -- Size of persistent or memory disk
@@ -2409,12 +2409,12 @@ compactor:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: compactor
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: compactor
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Labels for compactor service
   serviceLabels: {}
   # -- Annotations for compactor service
@@ -2456,24 +2456,24 @@ compactor:
     # -- List of the compactor PVCs
     # @notationType -- list
     claims:
-    - name: data
-      # -- Set access modes on the PersistentVolumeClaim
-      accessModes:
-      - ReadWriteOnce
-      size: 10Gi
-      #   -- Storage class to be used.
-      #   If defined, storageClassName: <storageClass>.
-      #   If set to "-", storageClassName: "", which disables dynamic provisioning.
-      #   If empty or set to null, no storageClassName spec is
-      #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
-      storageClass: null
-      # -- Annotations for compactor PVCs
-      annotations: {}
-      # -- Labels for compactor PVCs
-      labels: {}
-      # - name: wal
-      #   size: 150Gi
-      # -- Enable StatefulSetAutoDeletePVC feature
+      - name: data
+        # -- Set access modes on the PersistentVolumeClaim
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
+        # -- Annotations for compactor PVCs
+        annotations: {}
+        # -- Labels for compactor PVCs
+        labels: {}
+        # - name: wal
+        #   size: 150Gi
+        # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     whenDeleted: Retain
     whenScaled: Retain
@@ -2523,12 +2523,12 @@ bloomGateway:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: bloom-gateway
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: bloom-gateway
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Labels for bloom-gateway service
   serviceLabels: {}
   # -- Annotations for bloom-gateway service
@@ -2574,18 +2574,18 @@ bloomGateway:
     # -- List of the bloom-gateway PVCs
     # @notationType -- list
     claims:
-    - name: data
-      # -- Set access modes on the PersistentVolumeClaim
-      accessModes:
-      - ReadWriteOnce
-      # -- Size of persistent disk
-      size: 10Gi
-      #   -- Storage class to be used.
-      #   If defined, storageClassName: <storageClass>.
-      #   If set to "-", storageClassName: "", which disables dynamic provisioning.
-      #   If empty or set to null, no storageClassName spec is
-      #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
-      storageClass: null
+      - name: data
+        # -- Set access modes on the PersistentVolumeClaim
+        accessModes:
+          - ReadWriteOnce
+        # -- Size of persistent disk
+        size: 10Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     whenDeleted: Retain
@@ -2637,12 +2637,12 @@ bloomPlanner:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: bloom-planner
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: bloom-planner
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Labels for bloom-planner service
   serviceLabels: {}
   # -- Annotations for bloom-planner service
@@ -2684,22 +2684,22 @@ bloomPlanner:
     # -- List of the bloom-planner PVCs
     # @notationType -- list
     claims:
-    - name: data
-      # -- Set access modes on the PersistentVolumeClaim
-      accessModes:
-      - ReadWriteOnce
-      # -- Size of persistent disk
-      size: 10Gi
-      #   -- Storage class to be used.
-      #   If defined, storageClassName: <storageClass>.
-      #   If set to "-", storageClassName: "", which disables dynamic provisioning.
-      #   If empty or set to null, no storageClassName spec is
-      #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
-      storageClass: null
-      # -- Annotations for bloom-planner PVCs
-      annotations: {}
-      # -- Labels for bloom planner PVCs
-      labels: {}
+      - name: data
+        # -- Set access modes on the PersistentVolumeClaim
+        accessModes:
+          - ReadWriteOnce
+        # -- Size of persistent disk
+        size: 10Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
+        # -- Annotations for bloom-planner PVCs
+        annotations: {}
+        # -- Labels for bloom planner PVCs
+        labels: {}
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     whenDeleted: Retain
@@ -2800,12 +2800,12 @@ bloomBuilder:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: bloom-builder
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: bloom-builder
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Node selector for bloom-builder pods
@@ -2851,12 +2851,12 @@ patternIngester:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: pattern-ingester
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: pattern-ingester
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Labels for pattern ingester service
@@ -2909,24 +2909,24 @@ patternIngester:
     # -- List of the pattern ingester PVCs
     # @notationType -- list
     claims:
-    - name: data
-      # -- Set access modes on the PersistentVolumeClaim
-      accessModes:
-      - ReadWriteOnce
-      size: 10Gi
-      #   -- Storage class to be used.
-      #   If defined, storageClassName: <storageClass>.
-      #   If set to "-", storageClassName: "", which disables dynamic provisioning.
-      #   If empty or set to null, no storageClassName spec is
-      #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
-      storageClass: null
-      # -- Annotations for pattern ingester PVCs
-      annotations: {}
-      # -- Labels for pattern ingester PVCs
-      labels: {}
-      # - name: wal
-      #   size: 150Gi
-      # -- Enable StatefulSetAutoDeletePVC feature
+      - name: data
+        # -- Set access modes on the PersistentVolumeClaim
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
+        # -- Annotations for pattern ingester PVCs
+        annotations: {}
+        # -- Labels for pattern ingester PVCs
+        labels: {}
+        # - name: wal
+        #   size: 150Gi
+        # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     whenDeleted: Retain
     whenScaled: Retain
@@ -3000,12 +3000,12 @@ ruler:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: ruler
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: ruler
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Node selector for ruler pods
@@ -3022,7 +3022,7 @@ ruler:
     enabled: false
     # -- Set access modes on the PersistentVolumeClaim
     accessModes:
-    - ReadWriteOnce
+      - ReadWriteOnce
     # -- Size of persistent disk
     size: 10Gi
     # -- Storage class to be used.
@@ -3163,12 +3163,12 @@ overridesExporter:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: overrides-exporter
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: overrides-exporter
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- Pod Disruption Budget maxUnavailable
   maxUnavailable: null
   # -- Node selector for overrides-exporter pods
@@ -3205,7 +3205,7 @@ memcached:
   containerSecurityContext:
     readOnlyRootFilesystem: true
     capabilities:
-      drop: [ ALL ]
+      drop: [ALL]
     allowPrivilegeEscalation: false
   # -- Readiness probe for memcached pods (probe port defaults to container port)
   readinessProbe:
@@ -3240,7 +3240,7 @@ memcachedExporter:
   containerSecurityContext:
     readOnlyRootFilesystem: true
     capabilities:
-      drop: [ ALL ]
+      drop: [ALL]
     allowPrivilegeEscalation: false
   # -- Extra args to add to the exporter container.
   # Example:
@@ -3629,7 +3629,7 @@ rollout_operator:
   securityContext:
     readOnlyRootFilesystem: true
     capabilities:
-      drop: [ ALL ]
+      drop: [ALL]
     allowPrivilegeEscalation: false
 # -- Configuration for the minio subchart
 minio:
@@ -3646,19 +3646,19 @@ minio:
   # You can add additional users if desired; they will not impact Loki/GEL.
   # `accessKey` = username, `secretKey` = password
   users:
-  - accessKey: logs-user
-    secretKey: supersecretpassword
-    policy: readwrite
+    - accessKey: logs-user
+      secretKey: supersecretpassword
+      policy: readwrite
   buckets:
-  - name: chunks
-    policy: none
-    purge: false
-  - name: ruler
-    policy: none
-    purge: false
-  - name: admin
-    policy: none
-    purge: false
+    - name: chunks
+      policy: none
+      purge: false
+    - name: ruler
+      policy: none
+      purge: false
+    - name: admin
+      policy: none
+      purge: false
   persistence:
     size: 5Gi
     annotations: {}
@@ -3725,7 +3725,7 @@ sidecar:
     readOnlyRootFilesystem: true
     capabilities:
       drop:
-      - ALL
+        - ALL
     allowPrivilegeEscalation: false
   # -- Set to true to skip tls verification for kube api calls.
   skipTlsVerify: true #false
@@ -4002,12 +4002,12 @@ tableManager:
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/component: table-manager
-            app.kubernetes.io/name: '{{ include "loki.name" . }}'
-            app.kubernetes.io/instance: '{{ .Release.Name }}'
-        topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: table-manager
+              app.kubernetes.io/name: '{{ include "loki.name" . }}'
+              app.kubernetes.io/instance: "{{ .Release.Name }}"
+          topologyKey: kubernetes.io/hostname
   # -- DNS config table-manager pods
   dnsConfig: {}
   # -- Node selector for table-manager pods
