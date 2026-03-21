@@ -1,3 +1,7 @@
+persistence:
+  enabled: true
+  size: "256Mi"
+
 controller:
   admin:
     password: "${admin_password}"
@@ -7,12 +11,12 @@ controller:
     metallb.io/address-pool: ip-pool
 
   installPlugins:
-  - kubernetes
-  - workflow-aggregator:608.v67378e9d3db_1
-  - git:5.10.0
-  - configuration-as-code:2037.v8e5349845172
-  - oic-auth:4.626.ve5a_d9f26c051
-  - role-strategy
+    - kubernetes
+    - workflow-aggregator:608.v67378e9d3db_1
+    - git:5.10.0
+    - configuration-as-code:2037.v8e5349845172
+    - oic-auth:4.626.ve5a_d9f26c051
+    - role-strategy
 
   JCasC:
     defaultConfig: false
