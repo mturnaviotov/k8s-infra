@@ -8,6 +8,7 @@ resource "helm_release" "app" {
   values           = var.values
   set              = var.set
   take_ownership   = true
+  wait             = false
 
   disable_openapi_validation = true
 }

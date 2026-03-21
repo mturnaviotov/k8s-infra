@@ -130,4 +130,8 @@ You can use custom variables file with custom state file when you have OrbStack 
 ```bash
 terraform apply -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate # --auto-approve
 terraform apply -var-file=terraform-orb.tfvars -state=terraform-orb.tfstate # --auto-approve
+
+terraform apply  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate -target=kubernetes_namespace.ns
+terraform import  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate  'kubernetes_namespace.ns["auth"]' auth
+terraform import  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate  'kubernetes_namespace.ns["vault"]' vault
 ```

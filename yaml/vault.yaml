@@ -1,5 +1,9 @@
 # source of truth https://github.com/hashicorp/vault-helm/blob/main/values.yaml
 # vault-values.yaml
+dataStorage:
+  enabled: true
+  # Size of the PVC created
+  size: 128Mi
 
 server:
   dev:
@@ -11,9 +15,9 @@ server:
     enabled: true
     activeService: true
     hosts:
-    - host: vault.zone.internal
-    # $ {server}
-      paths: []
+      - host: vault.zone.internal
+        # $ {server}
+        paths: []
     annotations:
       cert-manager.io/cluster-issuer: local-ca
       external-dns.alpha.kubernetes.io/hostname: vault.zone.internal
@@ -24,22 +28,22 @@ server:
 
     ingressClassName: traefik
     rules:
-    - host: vault.zone.internal
-      # $ {server}
-      http:
-        paths:
-        - backend:
-            service:
-              name: vault-server
-              port:
-                number: 80
-          path: /
-          pathType: Prefix
+      - host: vault.zone.internal
+        # $ {server}
+        http:
+          paths:
+            - backend:
+                service:
+                  name: vault-server
+                  port:
+                    number: 80
+              path: /
+              pathType: Prefix
     tls:
-    - hosts:
-      - vault.zone.internal
-      # $ {server}
-      secretName: vault-tls
+      - hosts:
+          - vault.zone.internal
+        # $ {server}
+        secretName: vault-tls
 
 config: telemetry { prometheus_retention_time = "30s" disable_hostname = false }
 
