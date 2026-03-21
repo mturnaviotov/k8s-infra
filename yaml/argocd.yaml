@@ -6,6 +6,7 @@ global:
   domain: ${argo_url}
 
 server:
+  replicas: 1
   ingress:
     enabled: false
   insecure: true
@@ -29,8 +30,8 @@ configs:
     url: https://${argo_url}
 
   params:
-    server.insecure: 'true'
-    applicationsetcontroller.enable.leader.election: 'false'
+    server.insecure: "true"
+    applicationsetcontroller.enable.leader.election: "false"
     applicationsetcontroller.log.format: json
     applicationsetcontroller.log.level: info
     applicationcontroller.log.format: json
@@ -49,16 +50,16 @@ configs:
     reposerver.log.level: info
     server.log.format: json
     server.log.level: info
-    server.repo.server.strict.tls: 'false'
+    server.repo.server.strict.tls: "false"
   rbac:
     policy.csv: |
       %{ for group in admin_groups ~}
       g, ${group}, role:admin
       %{ endfor ~}
 
-    policy.default: ''
+    policy.default: ""
     policy.matchMode: glob
-    scopes: '[groups]'
+    scopes: "[groups]"
 
   secret:
     create: true
@@ -66,7 +67,13 @@ configs:
       oidc.keycloak.clientSecret: "${oidc_client_secret}"
 
 controller:
-  replicaCount: 1
+  replicas: 1
+
+repoServer:
+  replicas: 1
+
+applicationSet:
+  replicas: 1
 
 dex:
   enabled: false
