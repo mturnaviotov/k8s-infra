@@ -82,7 +82,9 @@ Please carefully read TF files, they contains pre installation steps, like certi
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.crds.yaml
-  kubectl apply --server-side -f https://github.com/argoproj/argo-cd/manifests/crds\?ref\=stable
+  kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/appproject-crd.yaml
+  kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/application-crd.yaml
+  kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/applicationset-crd.yaml
   ```
 
 - Import already done namespaces and apply Terraform
@@ -92,6 +94,20 @@ Please carefully read TF files, they contains pre installation steps, like certi
   terraform import 'kubernetes_namespace.ns["vault"]' vault
   terraform apply --auto-approve
   ```
+
+- You can use custom variables file with custom state file when you have OrbStack and K8s cluster on AWS both at the same time.
+
+```bash
+#prefix="-aws"
+prefix="-orb"
+
+terraform apply  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate -target=kubernetes_namespace.ns
+terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["auth"]' auth
+terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["vault"]' vault
+
+terraform apply -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
+# --auto-approve 
+```
 
 - Enable DNS in your system:
 
@@ -122,16 +138,3 @@ Please carefully read TF files, they contains pre installation steps, like certi
 1. ArgoCD Cluster will be in UNKNOWN state until first deploy.
 2. VS Code after updating may fail to connect to your K8s, check Settings - Privacy - Local networking - VS code -> Allow.
 3. After MacOS updates may clear your private dns resolvers, if someting goes wrong - check it.
-
-### MULTIPLE INFRASTRUCTURE
-
-You can use custom variables file with custom state file when you have OrbStack and K8s cluster on AWS both at the same time.
-
-```bash
-terraform apply -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate # --auto-approve
-terraform apply -var-file=terraform-orb.tfvars -state=terraform-orb.tfstate # --auto-approve
-
-terraform apply  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate -target=kubernetes_namespace.ns
-terraform import  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate  'kubernetes_namespace.ns["auth"]' auth
-terraform import  -var-file=terraform-aws.tfvars -state=terraform-aws.tfstate  'kubernetes_namespace.ns["vault"]' vault
-```
