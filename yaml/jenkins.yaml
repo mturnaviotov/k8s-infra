@@ -14,7 +14,7 @@ controller:
     - kubernetes
     - workflow-aggregator:608.v67378e9d3db_1
     - git:5.10.0
-    - configuration-as-code:2037.v8e5349845172
+    - configuration-as-code:2053.vb_0da_47381a_25
     - oic-auth:4.626.ve5a_d9f26c051
     - role-strategy
 
