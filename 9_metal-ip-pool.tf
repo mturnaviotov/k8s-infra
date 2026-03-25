@@ -11,8 +11,8 @@ resource "kubernetes_manifest" "metallb_dns_pool" {
     }
     "spec" = {
       "addresses"     = var.metallb_dns_range
-      "autoAssign"    = true
-      "avoidBuggyIPs" = false
+      "autoAssign"    = false
+      "avoidBuggyIPs" = true
     }
   }
 }
@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "metallb_ip_pool" {
     "spec" = {
       "addresses"     = var.metallb_ip_ranges
       "autoAssign"    = true
-      "avoidBuggyIPs" = false
+      "avoidBuggyIPs" = true
     }
   }
 }
