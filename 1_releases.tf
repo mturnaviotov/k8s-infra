@@ -132,7 +132,7 @@ locals {
       values = [templatefile("${path.module}/yaml/argocd.yaml", {
         clientID           = "argocd"
         oidc_client_secret = keycloak_openid_client.argocd.client_secret
-        issuer             = https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}
+        issuer             = "https://${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
         admin_groups       = ["argocd-admin"]
         argo_url           = "argocd.${var.dns_private_zone_name}"
         })

@@ -23,7 +23,7 @@ configs:
     oidc.tls.insecure.skip.verify: "true"
     oidc.config: |
       name: Keycloak
-      issuer: "${issuer}"
+      issuer: ${issuer}
       clientID: "${clientID}"
       clientSecret: $oidc.keycloak.clientSecret
       requestedScopes: ["openid", "profile", "email"]
