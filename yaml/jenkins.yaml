@@ -1,6 +1,6 @@
 persistence:
   enabled: true
-  size: "256Mi"
+  size: "128Mi"
 
 controller:
   admin:

@@ -125,10 +125,10 @@ spec:
             failureThreshold: 3
           resources:
             limits:
-              cpu: 300m
+              cpu: 1000m
               memory: 750Mi
             requests:
-              cpu: 250m
+              cpu: 500m
               memory: 500Mi
 ---
 # This is deployment of PostgreSQL with an ephemeral storage for testing: Once the Pod stops, the data is lost.

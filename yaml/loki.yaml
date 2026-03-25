@@ -1239,7 +1239,7 @@ singleBinary:
     accessModes:
       - ReadWriteOnce
     # -- Size of persistent disk
-    size: 512Mi
+    size: 256Mi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.

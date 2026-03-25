@@ -52,7 +52,7 @@ Please carefully read TF files, they contains pre installation steps, like certi
 - Edit it properly
 
 - Check headers of yaml/keycloak.yaml, you need to install it manually before terraform will succesfully run. You also SHOULD change admin password to something more secure in KC_BOOTSTRAP_ADMIN_PASSWORD variable as this service will be used for SSO and have public access
-  `kubectl -n auth apply -f yaml/keycloak.yaml`
+  `kubectl create ns auth; kubectl -n auth apply -f yaml/keycloak.yaml`
 
 - Sign in to keycloak, go to clients -> admin-cli, enable client authentication, save, go to credentials
   tab and copy client secret to terraform.vars
@@ -79,12 +79,20 @@ Please carefully read TF files, they contains pre installation steps, like certi
 - Apply external CRDs due to helm charts fail on first install
 
   ```bash
+  # Network
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.crds.yaml
+  
+  # ArgoCD
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/appproject-crd.yaml
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/application-crd.yaml
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/applicationset-crd.yaml
+
+  # Metal Load Balancer basic CRD
+  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_ipaddresspools.yaml
+  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_l2advertisements.yaml
+
   ```
 
 - Import already done namespaces and apply Terraform
@@ -101,11 +109,11 @@ Please carefully read TF files, they contains pre installation steps, like certi
 #prefix="-aws"
 prefix="-orb"
 
-terraform apply  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate -target=kubernetes_namespace.ns
+terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate -target=kubernetes_namespace.ns
 terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["auth"]' auth
 terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["vault"]' vault
 
-terraform apply -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
+terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
 # --auto-approve 
 ```
 
