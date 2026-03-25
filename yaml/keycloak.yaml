@@ -10,8 +10,6 @@ metadata:
   name: keycloak
   labels:
     app: keycloak
-  annotations:
-    metallb.io/address-pool: ip-pool
 spec:
   ports:
     - protocol: TCP
@@ -20,7 +18,7 @@ spec:
       name: http
   selector:
     app: keycloak
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -56,7 +54,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.4.2
+          image: quay.io/keycloak/keycloak:26.5.6
           args: ["start"]
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
