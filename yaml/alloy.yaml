@@ -1,7 +1,7 @@
-# source of true https://raw.githubusercontent.com/grafana/alloy/main/operations/helm/charts/alloy/values.yaml
-# helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
-# ./yaml/alloy-tune.yaml
-###
+## source of true https://raw.githubusercontent.com/grafana/alloy/main/operations/helm/charts/alloy/values.yaml
+## helm install -n mon alloy grafana/alloy -f ./yaml/alloy-tune.yaml
+## ./yaml/alloy-tune.yaml
+##
 controller:
   # -- Type of controller to use for deploying Grafana Alloy in the cluster.
   # Must be one of 'daemonset', 'deployment', or 'statefulset'.
@@ -49,25 +49,25 @@ alloy:
         }
       }
 
-      local.file_match "logs" {
-        path_targets = [{
-            // Monitor syslog to scrape node-logs
-            __path__  = "/var/log/pods/*",
-            //job       = "node/syslog",
-            //node_name = sys.env("HOSTNAME"),
-            //cluster   = orbstack,
-        }]
-      }
+      // local.file_match "logs" {
+      //   path_targets = [{
+      //       // Monitor syslog to scrape node-logs
+      //       __path__  = "/var/log/pods/*",
+      //       //job       = "node/syslog",
+      //       //node_name = sys.env("HOSTNAME"),
+      //       //cluster   = orbstack,
+      //   }]
+      // }
 
-      loki.source.file "logs" {
-        // Collect logs from the default listen address.
-        // local.file_match.logs.targets
-        targets = [
-          {__path__ = "/var/log/pods", "color" = "pink"},
-        ]
+      // loki.source.file "logs" {
+      //   // Collect logs from the default listen address.
+      //   // local.file_match.logs.targets
+      //   targets = [
+      //     {__path__ = "/var/log/pods", "color" = "pink"},
+      //   ]
 
-        forward_to = [loki.write.loki.receiver]
-      }
+      //   forward_to = [loki.write.loki.receiver]
+      // }
 
       discovery.kubernetes "pod" {
         role = "pod"

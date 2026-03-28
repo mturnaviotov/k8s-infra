@@ -8,11 +8,11 @@ locals {
       name       = "traefik"
       repository = "https://helm.traefik.io/traefik"
       chart      = "traefik"
-      version    = "37.3.0"
+      version    = "39.0.6"
       namespace  = kubernetes_namespace_v1.ns["ingress"].metadata[0].name
 
       values = [templatefile("${path.module}/yaml/traefik.yaml", {
-        dns_zone = var.dns_orb_zone
+        dns_zone = var.dns_private_zone_name
         })
       ]
     }
@@ -24,7 +24,7 @@ locals {
       namespace  = kubernetes_namespace_v1.ns["dns"].metadata[0].name
       repository = "https://kubernetes-sigs.github.io/external-dns/"
       chart      = "external-dns"
-      version    = "1.19.0"
+      version    = "1.20.0"
 
       values = [templatefile("${path.module}/yaml/external-dns.yaml", {
         dns_server_name       = "pdns"
@@ -61,7 +61,7 @@ locals {
       name      = "cert-manager"
       chart     = "oci://quay.io/jetstack/charts/cert-manager"
       namespace = kubernetes_namespace_v1.ns["cert-manager"].metadata[0].name
-      version   = "v1.19.1"
+      version   = "v1.20.1"
 
       set = [
         {
@@ -78,20 +78,6 @@ locals {
     #### NETWORKING BASICS FINISH ####
 
     # Vault disabled due to manual installation and Terraform import complexity
-    # "vault" = {
-    #   name       = "vault"
-    #   repository = "https://helm.releases.hashicorp.com"
-    #   chart      = "vault"
-    #   namespace  = kubernetes_namespace.ns["vault"].metadata[0].name
-    #   version    = "0.32.0"
-
-    #   values = [templatefile("${path.module}/yaml/vault.yaml", {
-    #     admin_token          = var.vault_admin_token
-    #     server               = "vault.${var.dns_private_zone_name}"
-    #     kubernetes_namespace = kubernetes_namespace.ns["vault"].metadata[0].name
-    #     })
-    #   ]
-    # }
 
     #### CI/CD ####
     "jenkins" = {
@@ -99,7 +85,7 @@ locals {
       repository = "https://charts.jenkins.io"
       chart      = var.name_jenkins
       namespace  = kubernetes_namespace_v1.ns["jenkins"].metadata[0].name
-      version    = "5.9.8"
+      version    = "5.9.9"
 
       values = [templatefile("${path.module}/yaml/jenkins.yaml", {
         admin_password       = var.jenkins_admin_password
@@ -127,7 +113,7 @@ locals {
       repository = "https://argoproj.github.io/argo-helm"
       chart      = "argo-cd"
       namespace  = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
-      version    = "9.4.12"
+      version    = "9.4.17"
 
       values = [templatefile("${path.module}/yaml/argocd.yaml", {
         clientID           = "argocd"
@@ -163,7 +149,7 @@ locals {
       repository = "https://grafana.github.io/helm-charts"
       chart      = "loki"
       namespace  = kubernetes_namespace_v1.ns["mon"].metadata[0].name
-      version    = "6.46.0"
+      version    = "6.55.0"
 
       values = [templatefile("${path.module}/yaml/loki.yaml", {})
       ]
@@ -175,7 +161,7 @@ locals {
       repository = "https://prometheus-community.github.io/helm-charts"
       chart      = "kube-prometheus-stack"
       namespace  = kubernetes_namespace_v1.ns["mon"].metadata[0].name
-      version    = "79.5.0"
+      version    = "82.15.0"
 
       values = [templatefile("${path.module}/yaml/kps.yaml", {
         clientID     = "grafana"
