@@ -80,9 +80,9 @@ Please carefully read TF files, they contains pre installation steps, like certi
 
   ```bash
   # Network
-  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
-  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
-  kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.crds.yaml
+  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6.12/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+  kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6.12/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
+  kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.20.1/cert-manager.crds.yaml
   
   # ArgoCD
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/appproject-crd.yaml
@@ -98,8 +98,6 @@ Please carefully read TF files, they contains pre installation steps, like certi
 - Import already done namespaces and apply Terraform
 
   ```bash
-  terraform import 'kubernetes_namespace.ns["auth"]' auth
-  terraform import 'kubernetes_namespace.ns["vault"]' vault
   terraform apply --auto-approve
   ```
 
@@ -108,10 +106,6 @@ Please carefully read TF files, they contains pre installation steps, like certi
 ```bash
 #prefix="-aws"
 prefix="-orb"
-
-terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate -target=kubernetes_namespace.ns
-terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["auth"]' auth
-terraform import  -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate  'kubernetes_namespace.ns["vault"]' vault
 
 terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
 # --auto-approve 
