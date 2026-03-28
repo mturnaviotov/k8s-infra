@@ -16,7 +16,10 @@ resource "kubernetes_manifest" "argocd_root_app" {
       source = {
         repoURL        = "https://github.com/mturnaviotov/k8s-argo.git"
         targetRevision = "main"
-        path           = "root/"
+        path           = "apps/"
+        directory = {
+          recurse = true
+        }
       }
       destination = {
         server    = var.argocd_cluster_url
