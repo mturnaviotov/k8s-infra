@@ -43,7 +43,6 @@ resource "keycloak_openid_client_default_scopes" "grafana_default_scopes" {
     "profile",
     "email",
     "roles",
-    "groups",
     "web-origins",
     keycloak_openid_client_scope.grafana_groups.name,
   ]

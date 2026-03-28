@@ -37,7 +37,6 @@ resource "keycloak_openid_client_default_scopes" "jenkins_default_scopes" {
     "profile",
     "email",
     "roles",
-    "groups",
     "web-origins",
     keycloak_openid_client_scope.jenkins_groups.name,
   ]
