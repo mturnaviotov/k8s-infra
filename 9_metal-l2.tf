@@ -8,7 +8,7 @@ resource "kubernetes_manifest" "metallb_l2_advertisement" {
         "created-by" = "terraform"
       }
       "name"      = "l2-advertisement"
-      "namespace" = kubernetes_namespace.ns["metallb-system"].metadata[0].name
+      "namespace" = kubernetes_namespace_v1.ns["metallb-system"].metadata[0].name
     }
     "spec" = {
       "ipAddressPools" = [

@@ -24,19 +24,19 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 3.0.2"
+      version = ">= 3.1.1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.38.0"
+      version = ">= 3.0.1"
     }
     keycloak = {
       source  = "keycloak/keycloak"
-      version = "5.5.0"
+      version = "5.7.0"
     }
     vault = {
       source  = "hashicorp/vault"
-      version = "5.5.0"
+      version = "5.8.0"
     }
   }
 }

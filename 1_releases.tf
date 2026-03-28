@@ -9,7 +9,7 @@ locals {
       repository = "https://helm.traefik.io/traefik"
       chart      = "traefik"
       version    = "37.3.0"
-      namespace  = kubernetes_namespace.ns["ingress"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["ingress"].metadata[0].name
 
       values = [templatefile("${path.module}/yaml/traefik.yaml", {
         dns_zone = var.dns_orb_zone
@@ -21,14 +21,14 @@ locals {
 
     "external-dns" = {
       name       = "external-dns"
-      namespace  = kubernetes_namespace.ns["dns"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["dns"].metadata[0].name
       repository = "https://kubernetes-sigs.github.io/external-dns/"
       chart      = "external-dns"
       version    = "1.19.0"
 
       values = [templatefile("${path.module}/yaml/external-dns.yaml", {
         dns_server_name       = "pdns"
-        dns_server_address    = "http://pdns.${kubernetes_namespace.ns["dns"].metadata[0].name}.${var.dns_cluster_zone}:${var.dns_server_port}"
+        dns_server_address    = "http://pdns.${kubernetes_namespace_v1.ns["dns"].metadata[0].name}.${var.dns_cluster_zone}:${var.dns_server_port}"
         dns_server_password   = var.dns_server_password
         dns_private_zone_name = var.dns_private_zone_name
         })
@@ -37,7 +37,7 @@ locals {
     "pdns" = {
       name      = "pdns"
       chart     = "https://github.com/mturnaviotov/k8s-pdns/releases/download/0.0.5/pdns-0.0.5.tgz"
-      namespace = kubernetes_namespace.ns["dns"].metadata[0].name
+      namespace = kubernetes_namespace_v1.ns["dns"].metadata[0].name
       version   = "0.0.5"
       values = [templatefile("${path.module}/yaml/pdns.yaml", {
         zone_name = var.dns_private_zone_name
@@ -51,7 +51,7 @@ locals {
       name       = "metallb"
       repository = "https://metallb.github.io/metallb"
       chart      = "metallb"
-      namespace  = kubernetes_namespace.ns["metallb-system"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["metallb-system"].metadata[0].name
       version    = "0.15.3"
     }
 
@@ -60,7 +60,7 @@ locals {
     "cert-manager" = {
       name      = "cert-manager"
       chart     = "oci://quay.io/jetstack/charts/cert-manager"
-      namespace = kubernetes_namespace.ns["cert-manager"].metadata[0].name
+      namespace = kubernetes_namespace_v1.ns["cert-manager"].metadata[0].name
       version   = "v1.19.1"
 
       set = [
@@ -98,7 +98,7 @@ locals {
       name       = var.name_jenkins
       repository = "https://charts.jenkins.io"
       chart      = var.name_jenkins
-      namespace  = kubernetes_namespace.ns["jenkins"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["jenkins"].metadata[0].name
       version    = "5.9.8"
 
       values = [templatefile("${path.module}/yaml/jenkins.yaml", {
@@ -108,9 +108,9 @@ locals {
         dockerhub_password   = var.jenkins_dockerhub_password
         oidc_secret          = keycloak_openid_client.jenkins.client_secret
         jenkins_admin_group  = "${var.name_jenkins}-admin"
-        jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace.ns["jenkins"].metadata[0].name}.${var.dns_cluster_zone}"
+        jenkins_full_url     = "${var.name_jenkins}.${kubernetes_namespace_v1.ns["jenkins"].metadata[0].name}.${var.dns_cluster_zone}"
         jenkins_url          = "${var.name_jenkins}.${var.dns_private_zone_name}"
-        kubernetes_namespace = kubernetes_namespace.ns["jenkins"].metadata[0].name
+        kubernetes_namespace = kubernetes_namespace_v1.ns["jenkins"].metadata[0].name
         oidc_issuer          = "${var.name_keycloak}.${var.dns_private_zone_name}/realms/${var.keycloak_realm}"
         oidc_clientid        = var.name_jenkins
         dns_zone             = var.dns_cluster_zone
@@ -126,7 +126,7 @@ locals {
       name       = "argocd"
       repository = "https://argoproj.github.io/argo-helm"
       chart      = "argo-cd"
-      namespace  = kubernetes_namespace.ns["argocd"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
       version    = "9.4.12"
 
       values = [templatefile("${path.module}/yaml/argocd.yaml", {
@@ -147,7 +147,7 @@ locals {
       name       = "alloy"
       repository = "https://grafana.github.io/helm-charts"
       chart      = "alloy"
-      namespace  = kubernetes_namespace.ns["mon"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["mon"].metadata[0].name
       version    = "1.6.2"
 
       values = [templatefile("${path.module}/yaml/alloy.yaml", {
@@ -162,7 +162,7 @@ locals {
       name       = "loki"
       repository = "https://grafana.github.io/helm-charts"
       chart      = "loki"
-      namespace  = kubernetes_namespace.ns["mon"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["mon"].metadata[0].name
       version    = "6.46.0"
 
       values = [templatefile("${path.module}/yaml/loki.yaml", {})
@@ -174,7 +174,7 @@ locals {
       name       = "kps"
       repository = "https://prometheus-community.github.io/helm-charts"
       chart      = "kube-prometheus-stack"
-      namespace  = kubernetes_namespace.ns["mon"].metadata[0].name
+      namespace  = kubernetes_namespace_v1.ns["mon"].metadata[0].name
       version    = "79.5.0"
 
       values = [templatefile("${path.module}/yaml/kps.yaml", {

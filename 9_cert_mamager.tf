@@ -8,12 +8,12 @@
 # openssl req -x509 -newkey rsa:4096 -keyout ca.key -out ca.crt -days 365 -nodes -subj "/CN=local-ca"
 # Then install the CA cert into your system trust store, e.g. on macOS:
 # sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ca.crt
-resource "kubernetes_secret" "local_ca_key_pair" {
+resource "kubernetes_secret_v1" "local_ca_key_pair" {
   type = "kubernetes.io/tls"
 
   metadata {
     name      = "local-ca-key-pair"
-    namespace = kubernetes_namespace.ns["cert-manager"].metadata[0].name
+    namespace = kubernetes_namespace_v1.ns["cert-manager"].metadata[0].name
   }
 
   data = {
@@ -32,7 +32,7 @@ resource "kubernetes_manifest" "cluster_issuer_local_ca" {
     }
     spec = {
       ca = {
-        secretName = kubernetes_secret.local_ca_key_pair.metadata[0].name
+        secretName = kubernetes_secret_v1.local_ca_key_pair.metadata[0].name
       }
     }
   }

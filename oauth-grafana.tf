@@ -1,7 +1,7 @@
-resource "kubernetes_secret" "oauth_grafana" {
+resource "kubernetes_secret_v1" "oauth_grafana" {
   metadata {
     name      = "oauth-grafana"
-    namespace = kubernetes_namespace.ns["mon"].metadata[0].name
+    namespace = kubernetes_namespace_v1.ns["mon"].metadata[0].name
   }
 
   data = {

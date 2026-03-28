@@ -9,7 +9,7 @@ resource "kubernetes_manifest" "argocd_root_app" {
     kind       = "Application"
     metadata = {
       name      = "root"
-      namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
+      namespace = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
     }
     spec = {
       project = "default"
@@ -20,7 +20,7 @@ resource "kubernetes_manifest" "argocd_root_app" {
       }
       destination = {
         server    = var.argocd_cluster_url
-        namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
+        namespace = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
       }
       syncPolicy = {
         automated = {

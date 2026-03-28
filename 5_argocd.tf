@@ -19,14 +19,14 @@ variable "argocd_cluster_url" {
 # Service Account + RoleBinding
 #########################
 
-resource "kubernetes_service_account" "argocd_access" {
+resource "kubernetes_service_account_v1" "argocd_access" {
   metadata {
     name      = "argocd-access"
-    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
+    namespace = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
   }
 }
 
-resource "kubernetes_cluster_role_binding" "argocd_access_binding" {
+resource "kubernetes_cluster_role_binding_v1" "argocd_access_binding" {
   metadata {
     name = "argocd-access-binding"
   }
@@ -37,8 +37,8 @@ resource "kubernetes_cluster_role_binding" "argocd_access_binding" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account.argocd_access.metadata[0].name
-    namespace = kubernetes_service_account.argocd_access.metadata[0].namespace
+    name      = kubernetes_service_account_v1.argocd_access.metadata[0].name
+    namespace = kubernetes_service_account_v1.argocd_access.metadata[0].namespace
   }
 }
 
@@ -46,9 +46,9 @@ resource "kubernetes_cluster_role_binding" "argocd_access_binding" {
 resource "kubernetes_secret_v1" "argocd_access_token" {
   metadata {
     name      = "argocd-access-token"
-    namespace = kubernetes_service_account.argocd_access.metadata[0].namespace
+    namespace = kubernetes_service_account_v1.argocd_access.metadata[0].namespace
     annotations = {
-      "kubernetes.io/service-account.name" = kubernetes_service_account.argocd_access.metadata[0].name
+      "kubernetes.io/service-account.name" = kubernetes_service_account_v1.argocd_access.metadata[0].name
     }
   }
   type = "kubernetes.io/service-account-token"
@@ -58,10 +58,10 @@ resource "kubernetes_secret_v1" "argocd_access_token" {
 # ConfigMap (CA Cert)
 #########################
 
-data "kubernetes_config_map" "kube_root_ca" {
+data "kubernetes_config_map_v1" "kube_root_ca" {
   metadata {
     name      = "kube-root-ca.crt"
-    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
+    namespace = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
   }
 }
 
@@ -69,10 +69,10 @@ data "kubernetes_config_map" "kube_root_ca" {
 # ArgoCD Cluster Secret
 #########################
 
-resource "kubernetes_secret" "argocd_cluster_default" {
+resource "kubernetes_secret_v1" "argocd_cluster_default" {
   metadata {
     name      = var.argocd_cluster_name
-    namespace = kubernetes_namespace.ns["argocd"].metadata[0].name
+    namespace = kubernetes_namespace_v1.ns["argocd"].metadata[0].name
     labels = {
       "argocd.argoproj.io/secret-type" = "cluster"
     }
@@ -98,6 +98,6 @@ resource "kubernetes_secret" "argocd_cluster_default" {
 
 output "argocd_initial_admin_password" {
   description = "Initial ArgoCD admin password (decoded)\n"
-  value       = "\n=====\nArgoCD admin password:\nkubectl -n ${kubernetes_namespace.ns["argocd"].metadata[0].name} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode\n"
+  value       = "\n=====\nArgoCD admin password:\nkubectl -n ${kubernetes_namespace_v1.ns["argocd"].metadata[0].name} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode\n"
 }
 

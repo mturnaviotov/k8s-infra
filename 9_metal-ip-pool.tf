@@ -7,7 +7,7 @@ resource "kubernetes_manifest" "metallb_dns_pool" {
         "created-by" = "terraform"
       }
       "name"      = "dns-pool"
-      "namespace" = kubernetes_namespace.ns["metallb-system"].metadata[0].name
+      "namespace" = kubernetes_namespace_v1.ns["metallb-system"].metadata[0].name
     }
     "spec" = {
       "addresses"     = var.metallb_dns_range
@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "metallb_ip_pool" {
         "created-by" = "terraform"
       }
       "name"      = "ip-pool"
-      "namespace" = kubernetes_namespace.ns["metallb-system"].metadata[0].name
+      "namespace" = kubernetes_namespace_v1.ns["metallb-system"].metadata[0].name
     }
     "spec" = {
       "addresses"     = var.metallb_ip_ranges

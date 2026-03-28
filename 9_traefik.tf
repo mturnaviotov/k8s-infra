@@ -7,7 +7,7 @@ resource "kubernetes_manifest" "traefik_ingressroute" {
     kind       = "IngressRoute"
     metadata = {
       name      = "traefik"
-      namespace = kubernetes_namespace.ns["ingress"].metadata[0].name
+      namespace = kubernetes_namespace_v1.ns["ingress"].metadata[0].name
     }
     spec = {
       entryPoints = ["web", "websecure"]
