@@ -49,16 +49,22 @@ Please carefully read TF files, they contains pre installation steps, like certi
 
 - Copy terraform.tfvars.default to terraform.tfvars
 
-- Edit it properly
+- Edit it properly for your requirements
 
-- Check headers of yaml/keycloak.yaml, you need to install it manually before terraform will succesfully run. You also SHOULD change admin password to something more secure in KC_BOOTSTRAP_ADMIN_PASSWORD variable as this service will be used for SSO and have public access
+- Check headers of yaml/keycloak.yaml, you need to install it manually before terraform will succesfully run. You also SHOULD change admin password to something more secure in KC_BOOTSTRAP_ADMIN_PASSWORD variable as this service will be used for SSO and have public access, but for local dev you can leave it as is
+
+- Setup KeyCloak to your cluster
+
   `kubectl create ns auth; kubectl -n auth apply -f yaml/keycloak.yaml`
 
-- Sign in to keycloak, go to clients -> admin-cli, enable client authentication, save, go to credentials
-  tab and copy client secret to terraform.vars
-  _-NOTICE-_: In Terraform KeyCloak installation password changed to random string.
+- Run `bash ./set-keycloak.sh` script to get admin-cli secret and update it in terraform.vars
+  You _MUST_ disable echo of secret by editing script and removing last line to avoid secret leakage in logs.
+
+  _-NOTICE-_: In Terraform KeyCloak installation password changed to random string, saved to keycloak_password.txt
+  and you need to update it in terraform.vars also
 
 - Update yaml/vault.yaml also for your needs. and Install Vault as prerequirement for terraform
+
   _-NOTICE-_: In Terraform Vault installation you need manually unseal Vault after installation.
   _-NOTICE-_: In this installation we changed Vault to dev mode and pre-configured root token
 
@@ -82,38 +88,41 @@ Please carefully read TF files, they contains pre installation steps, like certi
   # Network
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6.12/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
   kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6.12/docs/content/reference/dynamic-configuration/kubernetes-crd-rbac.yml
+
+  # Cert Manager
   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.20.1/cert-manager.crds.yaml
+  
+  # Metal Load Balancer basic CRD
+  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_ipaddresspools.yaml
+  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_l2advertisements.yaml
   
   # ArgoCD
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/appproject-crd.yaml
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/application-crd.yaml
   kubectl apply --server-side -f https://raw.githubusercontent.com/argoproj/argo-cd/refs/heads/master/manifests/crds/applicationset-crd.yaml
-
-  # Metal Load Balancer basic CRD
-  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_ipaddresspools.yaml
-  kubectl apply --server-side -f https://raw.githubusercontent.com/metallb/metallb/refs/heads/main/config/crd/bases/metallb.io_l2advertisements.yaml
-
   ```
 
-- Import already done namespaces and apply Terraform
+- Apply Terraform
 
   ```bash
   terraform apply --auto-approve
   ```
 
-- You can use custom variables file with custom state file when you have OrbStack and K8s cluster on AWS both at the same time.
+- You can use custom variables file with custom state file when you have more than one cluster at the same time.
 
-```bash
-#prefix="-aws"
-prefix="-orb"
+  ```bash
+  #prefix="-aws"
+  prefix="-orb"
 
-terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
-# --auto-approve 
-```
+  terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.tfstate 
+  # --auto-approve 
+  ```
 
 - Enable DNS in your system:
 
   - MacOS: Update /etc/resolver/zone.internal for proper PowerDNS Ingress/MetalLB IP and update MacOS resolver zone (some operations may be prohibited via sudo and copy paste, so run it via sudo manually)
+
+  _-NOTICE-_: Sometimes PowerDNS pod doesn't use static ip after terraform apply, so you need to restart K8s cluster to apply it again
 
   ```bash
   dnsPod=`kubectl get svc --all-namespaces | grep pdns | awk '{print $4}'`
@@ -123,8 +132,9 @@ terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.
   ```
 
   - Linux: Add to /etc/systemd/resolved.conf and restart service ```sudo systemctl restart systemd-resolved```.
-
     You can also define your PowerDNS pod here to directly use your private DNS zone
+
+  _-NOTICE-_: In Terraform Ansible setup DNS for all nodes in cluster
 
     ```bash
     DNS=10.96.0.10 8.8.8.8 2001:4860:4860::8888
@@ -138,5 +148,5 @@ terraform apply   -var-file=terraform${prefix}.tfvars -state=terraform${prefix}.
 ### Notices
 
 1. ArgoCD Cluster will be in UNKNOWN state until first deploy.
-2. VS Code after updating may fail to connect to your K8s, check Settings - Privacy - Local networking - VS code -> Allow.
-3. After MacOS updates may clear your private dns resolvers, if someting goes wrong - check it.
+2. VS Code on MacOS after updating may fail to connect to your K8s, check Settings - Privacy - Local networking - VS code -> Allow.
+3. After MacOS updates may clear your private dns resolvers, if someting goes wrong - check it and re-apply it.
